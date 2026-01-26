@@ -1,8 +1,5 @@
 {
   "name": "NADAL Yacht Charters",
   "description": "Ultra-premium Mediterranean yacht charter brand offering discrete, concierge-level experiences in Mallorca and the Balearic Islands.",
-  "requestFramePermissions": [
-    "camera",
-    "microphone"
-  ]
+  "requestFramePermissions": []
 }
