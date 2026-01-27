@@ -12,6 +12,7 @@ export interface Testimonial {
   id: string;
   quote: string;
   author: string;
+  authorImage: string;
   context: string;
 }
 

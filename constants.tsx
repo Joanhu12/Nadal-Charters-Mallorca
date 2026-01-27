@@ -41,6 +41,30 @@ export const INITIAL_CONTENT: AppContent = {
         image: "https://images.unsplash.com/photo-1569263979104-865ab7cd8d13?auto=format&fit=crop&q=80&w=800",
         price: "€9,200 / Day",
         details: "3 Cabins · Classic"
+      },
+      {
+        id: "4",
+        title: "Aurelia V",
+        subtitle: "Sleek Performance",
+        image: "https://images.unsplash.com/photo-1563299317-76c9ef63901b?auto=format&fit=crop&q=80&w=800",
+        price: "€14,500 / Day",
+        details: "4 Cabins · Sport"
+      },
+      {
+        id: "5",
+        title: "Oceanis 51",
+        subtitle: "Pure Sailing",
+        image: "https://images.unsplash.com/photo-1605281317010-fe5ffe798151?auto=format&fit=crop&q=80&w=800",
+        price: "€6,800 / Day",
+        details: "3 Cabins · Sailing"
+      },
+      {
+        id: "6",
+        title: "Palma Royal",
+        subtitle: "Grand Luxury",
+        image: "https://images.unsplash.com/photo-1444491741275-3747c53c99b4?auto=format&fit=crop&q=80&w=800",
+        price: "€22,000 / Day",
+        details: "6 Cabins · Grand"
       }
     ]
   },
@@ -61,9 +85,24 @@ export const INITIAL_CONTENT: AppContent = {
     items: [
       {
         id: "t1",
-        quote: "The definitive way to experience the Balearics.",
-        author: "Private Client",
-        context: "August 2024"
+        quote: "The definitive way to experience the Balearics. The crew's attention to detail and knowledge of hidden Calas was beyond anything we've seen elsewhere.",
+        author: "Julian Vercetti",
+        authorImage: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=300",
+        context: "August 2024 · Mallorca"
+      },
+      {
+        id: "t2",
+        quote: "Absolute privacy and impeccable service. We spent three days in hidden coves that felt like another world.",
+        author: "Elena Sorokin",
+        authorImage: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=300",
+        context: "July 2024 · Cabrera"
+      },
+      {
+        id: "t3",
+        quote: "NADAL represents the pinnacle of Mediterranean yachting. Every request was handled with discrete professionalism.",
+        author: "Marcus Thorne",
+        authorImage: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=300",
+        context: "September 2024 · Formentera"
       }
     ]
   },

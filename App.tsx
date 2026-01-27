@@ -1,10 +1,27 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Settings, Check, Image as ImageIcon, X, RotateCcw, Upload, AlertCircle, Instagram, ArrowRight } from 'lucide-react';
+import { Settings, Check, Image as ImageIcon, X, RotateCcw, Upload, AlertCircle, Instagram, ArrowRight, ArrowLeft, Quote, ChevronRight, ChevronLeft, Minus, MessageCircle } from 'lucide-react';
 import { AppContent } from './types';
 import { INITIAL_CONTENT } from './constants';
 import { Navbar } from './components/Navbar';
 import { EditableText } from './components/EditableText';
+
+// Custom TikTok icon since it might not be in all lucide versions
+const TiktokIcon = ({ size = 20, className = "" }) => (
+  <svg 
+    width={size} 
+    height={size} 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth="2" 
+    strokeLinecap="round" 
+    strokeLinejoin="round" 
+    className={className}
+  >
+    <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
+  </svg>
+);
 
 interface PendingImageUpdate {
   section: keyof AppContent;
@@ -31,6 +48,7 @@ const App: React.FC = () => {
   const [tempUrl, setTempUrl] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
   const [showLabel, setShowLabel] = useState(false);
+  const [activeTestimonial, setActiveTestimonial] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -76,15 +94,15 @@ const App: React.FC = () => {
     }));
   };
 
-  const updateListItem = (section: keyof AppContent, index: number, field: string, value: string) => {
+  const updateListItem = (section: keyof AppContent, index: number, field: string, value: string, listField: string = 'items') => {
     setContent(prev => {
-      const list = [...(prev[section] as any).items];
+      const list = [...(prev[section] as any)[listField]];
       list[index] = { ...list[index], [field]: value };
       return {
         ...prev,
         [section]: {
           ...(prev[section] as any),
-          items: list
+          [listField]: list
         }
       };
     });
@@ -154,23 +172,34 @@ const App: React.FC = () => {
       setContent(INITIAL_CONTENT);
       localStorage.removeItem('nadal_content');
       setIsEditorMode(false);
+      setActiveTestimonial(0);
     }
   };
 
-  const ImageFallback = ({ src, className }: { src: string; className: string }) => {
+  const nextTestimonial = () => {
+    setActiveTestimonial((prev) => (prev + 1) % content.testimonials.items.length);
+  };
+
+  const prevTestimonial = () => {
+    setActiveTestimonial((prev) => (prev - 1 + content.testimonials.items.length) % content.testimonials.items.length);
+  };
+
+  const ImageFallback = ({ src, className, isCircle = false }: { src: string; className: string; isCircle?: boolean }) => {
     const [error, setError] = useState(false);
     if (error || !src) {
       return (
-        <div className={`${className} bg-gradient-to-br from-[#0D1217] to-[#151B22] flex flex-col items-center justify-center border border-white/5`}>
+        <div className={`${className} bg-gradient-to-br from-[#0D1217] to-[#151B22] flex flex-col items-center justify-center border border-white/5 ${isCircle ? 'rounded-full' : ''}`}>
           <span className="font-serif text-lg tracking-[0.4em] opacity-10">NADAL</span>
-          <AlertCircle size={16} className="mt-2 opacity-5" />
         </div>
       );
     }
-    return <img src={src} className={className} onError={() => setError(true)} alt="Gallery" />;
+    return <img src={src} className={`${className} ${isCircle ? 'rounded-full' : ''}`} onError={() => setError(true)} alt="Asset" />;
   };
 
   const whatsappUrl = "https://wa.me/34611215790";
+  const tiktokUrl = "https://www.tiktok.com/@nadalcharters?_r=1&_t=ZN-93QSDvQcwq6";
+
+  const fleetItems = content.fleet.items;
 
   return (
     <div className="relative overflow-x-hidden min-h-screen bg-[#080C10] text-[#FDFCF0]">
@@ -269,6 +298,17 @@ const App: React.FC = () => {
             <p className="text-base text-[#FDFCF0]/70 font-light leading-relaxed mb-8 max-w-md">
               <EditableText isEditing={isEditorMode} value={content.about.text} onSave={(val) => updateField('about', 'text', val)} tag="span" />
             </p>
+            <div className="mt-10">
+               <a 
+                href={whatsappUrl} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-4 bg-white/5 border border-gold/40 px-8 py-4 text-[10px] tracking-[0.4em] uppercase font-bold text-gold hover:bg-gold hover:text-[#080C10] transition-all group"
+               >
+                 Talk to one of our experts
+                 <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+               </a>
+            </div>
           </div>
           <div className="relative group overflow-hidden border border-white/5">
             <ImageFallback src={content.about.image} className="w-full aspect-square object-cover" />
@@ -278,19 +318,19 @@ const App: React.FC = () => {
       </section>
 
       {/* FLEET GRID */}
-      <section id="fleet" className="py-32 px-6 bg-[#0A0E12] border-t border-white/5 scroll-mt-24">
-        <div className="max-w-7xl mx-auto">
+      <section id="fleet" className="py-32 px-6 bg-[#0A0E12] border-t border-white/5 scroll-mt-24 transition-all duration-1000">
+        <div className="max-w-7xl mx-auto text-center md:text-left">
           <h2 className="font-serif text-4xl md:text-7xl mb-24 text-center italic font-light tracking-tight">
             <EditableText isEditing={isEditorMode} value={content.fleet.heading} onSave={(val) => updateField('fleet', 'heading', val)} />
           </h2>
-          <div className="grid md:grid-cols-3 gap-12">
-            {content.fleet.items.map((item, idx) => (
-              <div key={item.id} className="group">
+          <div className="grid md:grid-cols-3 gap-12 transition-all duration-1000">
+            {fleetItems.map((item, idx) => (
+              <div key={item.id} className="group animate-[fadeIn_1s_ease-out]">
                 <div className="relative overflow-hidden aspect-[3/4] mb-8 border border-white/5 bg-black">
                   <ImageFallback src={item.image} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" />
                   {isEditorMode && <button onClick={() => openImageEditor('fleet', 'image', item.image, idx)} className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-[9px] tracking-[0.4em] uppercase font-bold text-white">Curate</button>}
                 </div>
-                <div className="flex justify-between items-end">
+                <div className="flex justify-between items-end text-left px-2">
                   <div>
                     <h3 className="font-serif text-2xl italic mb-1"><EditableText isEditing={isEditorMode} value={item.title} onSave={(val) => updateListItem('fleet', idx, 'title', val)} /></h3>
                     <p className="text-[9px] tracking-[0.3em] uppercase text-white/40"><EditableText isEditing={isEditorMode} value={item.subtitle} onSave={(val) => updateListItem('fleet', idx, 'subtitle', val)} /></p>
@@ -302,6 +342,19 @@ const App: React.FC = () => {
                 </div>
               </div>
             ))}
+          </div>
+          
+          <div className="mt-24 flex flex-col items-center gap-12">
+            <a 
+              href={whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[11px] tracking-[0.6em] uppercase font-bold text-[#FDFCF0] hover:text-gold transition-all duration-500 group flex items-center gap-4 relative"
+            >
+              Request Private Catalog 
+              <ArrowRight size={16} className="group-hover:translate-x-3 transition-transform duration-500" />
+              <span className="absolute -bottom-2 left-0 w-0 h-[1px] bg-gold group-hover:w-full transition-all duration-700"></span>
+            </a>
           </div>
         </div>
       </section>
@@ -344,14 +397,103 @@ const App: React.FC = () => {
         </div>
       </section>
 
+      {/* TESTIMONIALS SECTION - SLIDER WITH PROFILE PICS */}
+      <section id="testimonials" className="py-32 px-6 bg-[#080C10] border-t border-white/5 scroll-mt-24 relative overflow-hidden">
+        <div className="max-w-5xl mx-auto text-center relative z-10">
+          <Quote className="text-gold mx-auto mb-12 opacity-30" size={48} />
+          
+          <div className="relative min-h-[400px] flex items-center justify-center">
+            {/* Nav Arrows */}
+            <button 
+              onClick={prevTestimonial}
+              className="absolute left-0 top-1/2 -translate-y-1/2 z-20 p-4 text-gold hover:text-white transition-all bg-white/5 hover:bg-white/10 rounded-full"
+              aria-label="Previous Testimonial"
+            >
+              <ChevronLeft size={32} />
+            </button>
+            <button 
+              onClick={nextTestimonial}
+              className="absolute right-0 top-1/2 -translate-y-1/2 z-20 p-4 text-gold hover:text-white transition-all bg-white/5 hover:bg-white/10 rounded-full"
+              aria-label="Next Testimonial"
+            >
+              <ChevronRight size={32} />
+            </button>
+
+            {/* Testimonial Content */}
+            <div className="w-full px-16">
+              {content.testimonials.items.map((testimonial, idx) => (
+                <div 
+                  key={testimonial.id} 
+                  className={`transition-all duration-700 absolute inset-0 flex flex-col items-center justify-center ${idx === activeTestimonial ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-95 pointer-events-none'}`}
+                >
+                  <div className="relative group mb-8">
+                    <ImageFallback 
+                      src={testimonial.authorImage} 
+                      className="w-24 h-24 md:w-32 md:h-32 object-cover border-2 border-gold/30 shadow-2xl" 
+                      isCircle 
+                    />
+                    {isEditorMode && (
+                      <button 
+                        onClick={() => openImageEditor('testimonials', 'authorImage', testimonial.authorImage, idx)} 
+                        className="absolute inset-0 bg-black/60 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <ImageIcon size={20} className="text-white" />
+                      </button>
+                    )}
+                  </div>
+
+                  <blockquote className="font-serif text-2xl md:text-4xl italic font-light leading-snug text-[#FDFCF0] mb-8 max-w-2xl">
+                    "<EditableText isEditing={isEditorMode} value={testimonial.quote} onSave={(val) => updateListItem('testimonials', idx, 'quote', val)} />"
+                  </blockquote>
+
+                  <div className="flex flex-col items-center gap-2">
+                    <span className="text-[12px] tracking-[0.5em] uppercase font-bold text-gold">
+                      <EditableText isEditing={isEditorMode} value={testimonial.author} onSave={(val) => updateListItem('testimonials', idx, 'author', val)} />
+                    </span>
+                    <span className="text-[10px] tracking-[0.2em] uppercase text-white/40">
+                      <EditableText isEditing={isEditorMode} value={testimonial.context} onSave={(val) => updateListItem('testimonials', idx, 'context', val)} />
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Slider Indicators */}
+          <div className="flex justify-center gap-4 mt-16">
+            {content.testimonials.items.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => setActiveTestimonial(idx)}
+                className={`h-[2px] transition-all duration-500 ${idx === activeTestimonial ? 'w-12 bg-gold' : 'w-6 bg-white/10 hover:bg-white/30'}`}
+              />
+            ))}
+          </div>
+
+          <div className="mt-12">
+            <button 
+              onClick={nextTestimonial}
+              className="text-[9px] tracking-[0.4em] uppercase font-bold text-gold/60 hover:text-gold transition-colors flex items-center gap-2 mx-auto group"
+            >
+              Swipe for more <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform" />
+            </button>
+          </div>
+        </div>
+      </section>
+
       {/* FOOTER / CONTACT */}
       <footer id="contact" className="py-24 px-6 bg-[#05080A] border-t border-white/5 scroll-mt-24">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-12">
           <div>
             <a href="#hero" onClick={(e) => scrollToSection(e, 'hero')} className="font-serif text-3xl tracking-[0.5em] uppercase text-[#FDFCF0] font-light mb-4 block hover:text-gold transition-colors">NADAL</a>
             <p className="text-[9px] tracking-[0.2em] text-[#FDFCF0]/30 uppercase mb-8">Balearic Yacht Charters · Est. 1984</p>
-            <div className="flex gap-4">
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-gold hover:text-white transition-all transform hover:scale-110"><Instagram size={20} /></a>
+            <div className="flex gap-6 items-center">
+              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-gold hover:text-white transition-all transform hover:scale-110" aria-label="Instagram">
+                <Instagram size={20} />
+              </a>
+              <a href={tiktokUrl} target="_blank" rel="noopener noreferrer" className="text-gold hover:text-white transition-all transform hover:scale-110" aria-label="TikTok">
+                <TiktokIcon size={20} />
+              </a>
             </div>
           </div>
           <div className="flex flex-col md:flex-row gap-12 text-[9px] tracking-[0.3em] uppercase text-[#FDFCF0]/40 font-medium">
@@ -376,6 +518,13 @@ const App: React.FC = () => {
           </div>
         </div>
       </footer>
+
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </div>
   );
 };
