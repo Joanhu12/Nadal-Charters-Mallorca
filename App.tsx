@@ -55,7 +55,8 @@ const App: React.FC = () => {
     try {
       localStorage.setItem('nadal_content', JSON.stringify(content));
     } catch (e) {
-      console.error("Storage limit reached.", e);
+      // Graceful fallback when localStorage is full
+      console.warn("Storage limit reached. Changes will be kept in session but not persisted on refresh.");
     }
   }, [content]);
 
@@ -132,28 +133,35 @@ const App: React.FC = () => {
       img.src = event.target?.result as string;
       img.onload = () => {
         const canvas = document.createElement('canvas');
-        const MAX_WIDTH = 1600;
-        const MAX_HEIGHT = 1600;
+        // More aggressive compression to respect localStorage limits (5MB)
+        const MAX_DIMENSION = 1000; 
         let width = img.width;
         let height = img.height;
 
         if (width > height) {
-          if (width > MAX_WIDTH) {
-            height *= MAX_WIDTH / width;
-            width = MAX_WIDTH;
+          if (width > MAX_DIMENSION) {
+            height *= MAX_DIMENSION / width;
+            width = MAX_DIMENSION;
           }
         } else {
-          if (height > MAX_HEIGHT) {
-            width *= MAX_HEIGHT / height;
-            height = MAX_HEIGHT;
+          if (height > MAX_DIMENSION) {
+            width *= MAX_DIMENSION / height;
+            height = MAX_DIMENSION;
           }
         }
 
         canvas.width = width;
         canvas.height = height;
         const ctx = canvas.getContext('2d');
-        ctx?.drawImage(img, 0, 0, width, height);
-        const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+        if (ctx) {
+          ctx.imageSmoothingEnabled = true;
+          ctx.imageSmoothingQuality = 'high';
+          ctx.drawImage(img, 0, 0, width, height);
+        }
+        
+        // Quality 0.5 is the "sweet spot" for high-res looking mobile images 
+        // while keeping the Base64 string significantly shorter.
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.5);
         setTempUrl(dataUrl);
         setIsProcessing(false);
       };
