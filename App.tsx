@@ -1,10 +1,10 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Settings, Check, Image as ImageIcon, X, RotateCcw, Upload, AlertCircle, Instagram, ArrowRight, ArrowLeft, Quote, ChevronRight, ChevronLeft, Minus, MessageCircle } from 'lucide-react';
-import { AppContent } from './types';
-import { INITIAL_CONTENT } from './constants';
-import { Navbar } from './components/Navbar';
-import { EditableText } from './components/EditableText';
+import { AppContent } from './types.ts';
+import { INITIAL_CONTENT } from './constants.tsx';
+import { Navbar } from './components/Navbar.tsx';
+import { EditableText } from './components/EditableText.tsx';
 
 // Custom TikTok icon since it might not be in all lucide versions
 const TiktokIcon = ({ size = 20, className = "" }) => (
