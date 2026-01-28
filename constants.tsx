@@ -1,4 +1,3 @@
-
 import { AppContent } from './types';
 
 export const INITIAL_CONTENT: AppContent = {
@@ -100,8 +99,8 @@ export const INITIAL_CONTENT: AppContent = {
       {
         id: "t3",
         quote: "NADAL represents the pinnacle of Mediterranean yachting. Every request was handled with discrete professionalism.",
-        author: "Brooke Sterling",
-        authorImage: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=400",
+        author: "Brooke Montgomery",
+        authorImage: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&q=80&w=400",
         context: "September 2024 · Formentera"
       }
     ]
