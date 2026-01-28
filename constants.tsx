@@ -44,27 +44,27 @@ export const INITIAL_CONTENT: AppContent = {
       },
       {
         id: "4",
-        title: "Aurelia V",
-        subtitle: "Sleek Performance",
-        image: "https://images.unsplash.com/photo-1563299317-76c9ef63901b?auto=format&fit=crop&q=80&w=800",
-        price: "€14,500 / Day",
-        details: "4 Cabins · Sport"
+        title: "Azure 60",
+        subtitle: "Luxury Catamaran",
+        image: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=800",
+        price: "€11,200 / Day",
+        details: "4 Cabins · Stability"
       },
       {
         id: "5",
-        title: "Oceanis 51",
-        subtitle: "Pure Sailing",
-        image: "https://images.unsplash.com/photo-1605281317010-fe5ffe798151?auto=format&fit=crop&q=80&w=800",
-        price: "€6,800 / Day",
-        details: "3 Cabins · Sailing"
+        title: "Zephyr 85",
+        subtitle: "Performance Cruiser",
+        image: "https://images.unsplash.com/photo-1517315003714-a071486bd9ea?auto=format&fit=crop&q=80&w=800",
+        price: "€15,500 / Day",
+        details: "4 Cabins · Speed"
       },
       {
         id: "6",
-        title: "Palma Royal",
-        subtitle: "Grand Luxury",
-        image: "https://images.unsplash.com/photo-1444491741275-3747c53c99b4?auto=format&fit=crop&q=80&w=800",
-        price: "€22,000 / Day",
-        details: "6 Cabins · Grand"
+        title: "Meridian",
+        subtitle: "Superyacht Luxe",
+        image: "https://images.unsplash.com/photo-1559136555-9303baea8ebd?auto=format&fit=crop&q=80&w=800",
+        price: "€38,000 / Day",
+        details: "6 Cabins · Jacuzzi"
       }
     ]
   },
@@ -100,8 +100,8 @@ export const INITIAL_CONTENT: AppContent = {
       {
         id: "t3",
         quote: "NADAL represents the pinnacle of Mediterranean yachting. Every request was handled with discrete professionalism.",
-        author: "Marcus Thorne",
-        authorImage: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=300",
+        author: "Brooke Sterling",
+        authorImage: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=400",
         context: "September 2024 · Formentera"
       }
     ]

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Settings, Check, Image as ImageIcon, X, RotateCcw, Upload, Instagram, ArrowRight, Quote, ChevronRight, ChevronLeft } from 'lucide-react';
+import { Settings, Check, Image as ImageIcon, X, RotateCcw, Upload, Instagram, Quote, ChevronRight, ChevronLeft, MapPin, Anchor } from 'lucide-react';
 import { AppContent } from './types';
 import { INITIAL_CONTENT } from './constants';
 import { Navbar } from './components/Navbar';
@@ -47,6 +47,10 @@ const App: React.FC = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [showLabel, setShowLabel] = useState(false);
   const [activeTestimonial, setActiveTestimonial] = useState(0);
+  const [showBookingOverlay, setShowBookingOverlay] = useState(false);
+  const [bookingStep, setBookingStep] = useState(1);
+  const [bookingData, setBookingData] = useState({ location: '', duration: '' });
+  
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -64,8 +68,8 @@ const App: React.FC = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
-    e.preventDefault();
+  const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement> | null, id: string) => {
+    if (e) e.preventDefault();
     const element = document.getElementById(id);
     if (element) {
       const offset = 80;
@@ -133,7 +137,6 @@ const App: React.FC = () => {
         const MAX_DIMENSION = 1000;
         let width = img.width;
         let height = img.height;
-
         if (width > height) {
           if (width > MAX_DIMENSION) {
             height *= MAX_DIMENSION / width;
@@ -145,7 +148,6 @@ const App: React.FC = () => {
             height = MAX_DIMENSION;
           }
         }
-
         canvas.width = width;
         canvas.height = height;
         const ctx = canvas.getContext('2d');
@@ -194,12 +196,102 @@ const App: React.FC = () => {
     return <img src={src} className={`${className} ${isCircle ? 'rounded-full' : ''}`} onError={() => setError(true)} alt="Asset" />;
   };
 
-  const whatsappUrl = `https://wa.me/${content.contact.whatsapp.replace(/\s+/g, '')}`;
+  const handleFinalBooking = () => {
+    const loc = bookingData.location;
+    const dur = bookingData.duration;
+    
+    let specificInfo = "";
+    if (loc && dur) {
+      specificInfo = `\nSpecifically, I am interested in a ${dur.toLowerCase()} in ${loc}.`;
+    } else if (loc) {
+      specificInfo = `\nSpecifically, I am interested in a charter in ${loc}.`;
+    } else if (dur) {
+      specificInfo = `\nSpecifically, I am interested in a ${dur.toLowerCase()}.`;
+    }
+
+    const messageTemplate = `Hello,\n\nI would like to enquire about a private yacht charter in the Balearic Islands.${specificInfo}\n\nKind regards.`;
+    openWhatsApp(messageTemplate);
+    setShowBookingOverlay(false);
+    setBookingStep(1);
+    setBookingData({ location: '', duration: '' });
+  };
+
+  const openWhatsApp = (message: string) => {
+    const encodedMsg = encodeURIComponent(message);
+    const whatsappLink = `https://wa.me/${content.contact.whatsapp.replace(/\s+/g, '')}?text=${encodedMsg}`;
+    window.open(whatsappLink, '_blank');
+  };
+
+  const handleFleetClick = (yachtTitle: string) => {
+    if (isEditorMode) return;
+    const message = `Hello,\n\nI would like to enquire about the ${yachtTitle} private yacht charter in the Balearic Islands.\n\nKind regards.`;
+    openWhatsApp(message);
+  };
+
+  const defaultMsg = "Hello,\n\nI would like to enquire about a private yacht charter in the Balearic Islands.\n\nKind regards.";
+  const whatsappUrl = `https://wa.me/${content.contact.whatsapp.replace(/\s+/g, '')}?text=${encodeURIComponent(defaultMsg)}`;
   const tiktokUrl = "https://www.tiktok.com/@nadalcharters";
 
   return (
     <div className="relative overflow-x-hidden min-h-screen bg-[#080C10] text-[#FDFCF0]">
       <Navbar />
+
+      {/* GLOBAL BOOKING TRIGGER (HIDDEN) */}
+      <button id="global-book-trigger" className="hidden" onClick={() => setShowBookingOverlay(true)} />
+
+      {/* BOOKING OVERLAY */}
+      {showBookingOverlay && (
+        <div className="fixed inset-0 z-[120] flex items-center justify-center p-6 bg-black/95 backdrop-blur-2xl transition-all duration-500">
+          <div className="bg-[#0D1217] border border-[#C5A27D]/20 p-8 md:p-12 max-w-xl w-full shadow-2xl relative">
+            <button onClick={() => setShowBookingOverlay(false)} className="absolute top-6 right-6 text-white/40 hover:text-white transition-colors"><X size={24} /></button>
+            
+            <div className="text-center mb-10">
+              <span className="text-[10px] tracking-[0.4em] uppercase text-gold block mb-4">Voyage Selection</span>
+              <h3 className="font-serif text-4xl italic mb-2">Configure Your Experience</h3>
+            </div>
+
+            {bookingStep === 1 && (
+              <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <p className="text-center text-[10px] tracking-[0.3em] uppercase opacity-40 mb-8">Choose Location</p>
+                <div className="grid grid-cols-2 gap-4">
+                  {['Mallorca', 'Ibiza & Formentera'].map((loc) => (
+                    <button 
+                      key={loc}
+                      onClick={() => { setBookingData({ ...bookingData, location: loc }); setBookingStep(2); }}
+                      className="group border border-white/5 bg-white/5 py-10 px-4 flex flex-col items-center gap-4 hover:border-gold/40 hover:bg-gold/5 transition-all duration-300"
+                    >
+                      <MapPin size={24} className="text-gold/60 group-hover:text-gold transition-colors" />
+                      <span className="text-[11px] tracking-[0.2em] uppercase font-bold">{loc}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {bookingStep === 2 && (
+              <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <p className="text-center text-[10px] tracking-[0.3em] uppercase opacity-40 mb-8">Charter Duration</p>
+                <div className="grid grid-cols-2 gap-4">
+                  {['Daily Charter', 'Weekly Charter'].map((dur) => (
+                    <button 
+                      key={dur}
+                      onClick={() => { 
+                        setBookingData({ ...bookingData, duration: dur });
+                        setTimeout(() => handleFinalBooking(), 100);
+                      }}
+                      className="group border border-white/5 bg-white/5 py-10 px-4 flex flex-col items-center gap-4 hover:border-gold/40 hover:bg-gold/5 transition-all duration-300"
+                    >
+                      <Anchor size={24} className="text-gold/60 group-hover:text-gold transition-colors" />
+                      <span className="text-[11px] tracking-[0.2em] uppercase font-bold">{dur}</span>
+                    </button>
+                  ))}
+                </div>
+                <button onClick={() => setBookingStep(1)} className="w-full text-[9px] tracking-[0.3em] uppercase text-white/30 hover:text-white pt-4">Back to Locations</button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* WHATSAPP FLOAT */}
       <div className="fixed bottom-6 right-6 z-[80] flex items-center gap-3">
@@ -261,9 +353,9 @@ const App: React.FC = () => {
             <EditableText isEditing={isEditorMode} value={content.hero.subtitle} onSave={(val) => updateField('hero', 'subtitle', val)} />
           </p>
           <div className="flex flex-col md:flex-row gap-8 justify-center items-center">
-            <a href="#contact" onClick={(e) => scrollToSection(e, 'contact')} className="bg-[#FDFCF0] text-[#080C10] py-4 px-12 text-[10px] tracking-[0.4em] uppercase font-bold hover:bg-[#C5A27D] transition-colors shadow-xl">
+            <button onClick={() => setShowBookingOverlay(true)} className="bg-[#FDFCF0] text-[#080C10] py-4 px-12 text-[10px] tracking-[0.4em] uppercase font-bold hover:bg-[#C5A27D] transition-colors shadow-xl">
               <EditableText isEditing={isEditorMode} value={content.hero.ctaPrimary} onSave={(val) => updateField('hero', 'ctaPrimary', val)} />
-            </a>
+            </button>
             <a href="#fleet" onClick={(e) => scrollToSection(e, 'fleet')} className="text-[10px] tracking-[0.4em] uppercase text-[#FDFCF0] font-bold border-b border-white/20 pb-1 hover:border-white transition-all">
               <EditableText isEditing={isEditorMode} value={content.hero.ctaSecondary} onSave={(val) => updateField('hero', 'ctaSecondary', val)} />
             </a>
@@ -282,9 +374,17 @@ const App: React.FC = () => {
             <h2 className="font-serif text-4xl md:text-6xl mb-8 italic font-light">
               <EditableText isEditing={isEditorMode} value={content.about.heading} onSave={(val) => updateField('about', 'heading', val)} tag="span" />
             </h2>
-            <p className="text-base text-[#FDFCF0]/70 font-light leading-relaxed mb-8">
+            <p className="text-base text-[#FDFCF0]/70 font-light leading-relaxed mb-10">
               <EditableText isEditing={isEditorMode} value={content.about.text} onSave={(val) => updateField('about', 'text', val)} tag="span" />
             </p>
+            <a 
+              href={whatsappUrl} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="inline-block border border-[#C5A27D] py-4 px-10 text-[9px] tracking-[0.4em] uppercase font-bold text-[#C5A27D] hover:bg-[#C5A27D] hover:text-[#080C10] transition-all duration-500"
+            >
+              Talk to an expert
+            </a>
           </div>
           <div className="relative group overflow-hidden border border-white/5">
             <ImageFallback src={content.about.image} className="w-full aspect-square object-cover" />
@@ -293,8 +393,8 @@ const App: React.FC = () => {
         </div>
       </section>
 
-      {/* FLEET */}
-      <section id="fleet" className="py-32 px-6 bg-[#0A0E12] border-t border-white/5 scroll-mt-24">
+      {/* FLEET COLLECTION */}
+      <section id="fleet" className="py-32 px-6 bg-[#080C10] border-t border-white/5 scroll-mt-24">
         <div className="max-w-7xl mx-auto">
           <h2 className="font-serif text-4xl md:text-7xl mb-24 italic font-light text-center">
             <EditableText isEditing={isEditorMode} value={content.fleet.heading} onSave={(val) => updateField('fleet', 'heading', val)} />
@@ -302,9 +402,24 @@ const App: React.FC = () => {
           <div className="grid md:grid-cols-3 gap-12">
             {content.fleet.items.map((item, idx) => (
               <div key={item.id} className="group">
-                <div className="relative overflow-hidden aspect-[3/4] mb-8 border border-white/5 bg-black">
+                <div 
+                  className={`relative overflow-hidden aspect-[3/4] mb-8 border border-white/5 bg-black ${!isEditorMode ? 'cursor-pointer' : ''}`}
+                  onClick={() => handleFleetClick(item.title)}
+                >
                   <ImageFallback src={item.image} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" />
-                  {isEditorMode && <button onClick={() => openImageEditor('fleet', 'image', item.image, idx)} className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center text-[9px] tracking-[0.4em] uppercase font-bold text-white">Curate</button>}
+                  {isEditorMode && (
+                    <button 
+                      onClick={(e) => { e.stopPropagation(); openImageEditor('fleet', 'image', item.image, idx); }} 
+                      className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center text-[9px] tracking-[0.4em] uppercase font-bold text-white z-20"
+                    >
+                      Curate
+                    </button>
+                  )}
+                  {!isEditorMode && (
+                    <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                       <span className="text-[10px] tracking-[0.4em] uppercase text-white font-bold border border-white/40 px-6 py-3 bg-black/20 backdrop-blur-sm">View Details</span>
+                    </div>
+                  )}
                 </div>
                 <div className="flex justify-between items-end px-2">
                   <div>
@@ -322,28 +437,118 @@ const App: React.FC = () => {
         </div>
       </section>
 
-      {/* TESTIMONIALS */}
-      <section id="testimonials" className="py-32 px-6 bg-[#080C10] border-t border-white/5 scroll-mt-24 overflow-hidden">
-        <div className="max-w-5xl mx-auto text-center relative">
-          <Quote className="text-gold mx-auto mb-12 opacity-30" size={48} />
-          <div className="relative h-64 md:h-48">
-            {content.testimonials.items.map((t, idx) => (
-              <div key={t.id} className={`absolute inset-0 transition-all duration-700 flex flex-col items-center ${idx === activeTestimonial ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'}`}>
-                <blockquote className="font-serif text-2xl md:text-3xl italic font-light mb-8 max-w-2xl">
-                  "<EditableText isEditing={isEditorMode} value={t.quote} onSave={(val) => updateListItem('testimonials', idx, 'quote', val)} />"
-                </blockquote>
-                <div className="flex flex-col items-center">
-                  <ImageFallback src={t.authorImage} className="w-12 h-12 object-cover border border-gold/30 mb-4" isCircle />
-                  <span className="text-[11px] tracking-[0.4em] uppercase font-bold text-gold">
-                    <EditableText isEditing={isEditorMode} value={t.author} onSave={(val) => updateListItem('testimonials', idx, 'author', val)} />
-                  </span>
+      {/* HARBOURS / DESTINATIONS */}
+      <section id="destinations" className="py-32 px-6 bg-[#0A0E12] border-t border-white/5 scroll-mt-24">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="font-serif text-4xl md:text-6xl mb-24 italic font-light text-center">
+            <EditableText isEditing={isEditorMode} value={content.destinations.heading} onSave={(val) => updateField('destinations', 'heading', val)} />
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+            {content.destinations.items.map((item, idx) => (
+              <div key={item.id} className="group overflow-hidden border border-white/5 relative aspect-square">
+                <ImageFallback src={item.image} className="w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-110" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
+                <div className="absolute bottom-10 left-10">
+                   <h3 className="font-serif text-3xl italic tracking-wide">
+                     <EditableText isEditing={isEditorMode} value={item.name} onSave={(val) => updateListItem('destinations', idx, 'name', val)} />
+                   </h3>
                 </div>
+                {isEditorMode && <button onClick={() => openImageEditor('destinations', 'image', item.image, idx)} className="absolute top-4 right-4 bg-black/60 p-2 text-[9px] tracking-[0.3em] uppercase text-white border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity">Asset</button>}
               </div>
             ))}
           </div>
-          <div className="flex justify-center gap-4 mt-12">
-            <button onClick={prevTestimonial} className="p-2 text-gold hover:text-white transition-colors"><ChevronLeft size={24} /></button>
-            <button onClick={nextTestimonial} className="p-2 text-gold hover:text-white transition-colors"><ChevronRight size={24} /></button>
+        </div>
+      </section>
+
+      {/* CONCIERGE */}
+      <section id="concierge" className="py-32 md:py-48 px-6 bg-[#080C10] border-t border-white/5 scroll-mt-24 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-30">
+          <ImageFallback src={content.concierge.image} className="w-full h-full object-cover grayscale" />
+        </div>
+        <div className="max-w-4xl mx-auto relative z-10 text-center">
+          <span className="text-[10px] tracking-[0.5em] uppercase text-gold block mb-6">Concierge Level</span>
+          <h2 className="font-serif text-5xl md:text-7xl mb-12 italic font-light">
+            <EditableText isEditing={isEditorMode} value={content.concierge.heading} onSave={(val) => updateField('concierge', 'heading', val)} />
+          </h2>
+          <p className="text-base md:text-xl text-[#FDFCF0]/70 font-light leading-relaxed mb-12 max-w-2xl mx-auto">
+            <EditableText isEditing={isEditorMode} value={content.concierge.text} onSave={(val) => updateField('concierge', 'text', val)} />
+          </p>
+          <button onClick={() => setShowBookingOverlay(true)} className="border border-[#C5A27D] py-5 px-14 text-[10px] tracking-[0.4em] uppercase font-bold text-[#C5A27D] hover:bg-[#C5A27D] hover:text-[#080C10] transition-all duration-500">
+            Request Service
+          </button>
+          {isEditorMode && <button onClick={() => openImageEditor('concierge', 'image', content.concierge.image)} className="absolute -bottom-12 right-0 bg-black/60 p-3 text-[9px] uppercase tracking-[0.3em] text-white border border-white/10">Frame Asset</button>}
+        </div>
+      </section>
+
+      {/* TESTIMONIALS - CLEAN ELITE LAYOUT */}
+      <section id="testimonials" className="py-32 md:py-48 px-6 bg-[#080C10] border-t border-white/5 scroll-mt-24 relative overflow-hidden">
+        <div className="max-w-4xl mx-auto relative flex flex-col items-center">
+          
+          {/* Subtle Frame Quote Background */}
+          <div className="absolute top-0 opacity-[0.04] text-gold -translate-y-16 select-none pointer-events-none">
+            <Quote size={240} />
+          </div>
+
+          {/* Testimonial Author Image Container */}
+          <div className="relative w-28 h-28 md:w-36 md:h-36 mb-16 z-10">
+            {content.testimonials.items.map((t, idx) => (
+              <div 
+                key={t.id} 
+                className={`absolute inset-0 transition-all duration-1000 transform ${idx === activeTestimonial ? 'opacity-100 scale-100' : 'opacity-0 scale-90 pointer-events-none'}`}
+              >
+                <ImageFallback 
+                  src={t.authorImage} 
+                  className="w-full h-full object-cover border border-white/10 grayscale-0 transition-all duration-700" 
+                  isCircle 
+                />
+              </div>
+            ))}
+          </div>
+
+          {/* Testimonial Text Container */}
+          <div className="relative w-full px-4 mb-16 min-h-[120px] md:min-h-[140px] flex items-center justify-center">
+            {content.testimonials.items.map((t, idx) => (
+              <div 
+                key={t.id} 
+                className={`absolute inset-0 transition-all duration-700 flex flex-col items-center text-center ${idx === activeTestimonial ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8 pointer-events-none'}`}
+              >
+                <blockquote className="font-serif text-2xl md:text-3xl italic font-light leading-relaxed text-[#FDFCF0]/90 max-w-2xl mx-auto">
+                  "<EditableText isEditing={isEditorMode} value={t.quote} onSave={(val) => updateListItem('testimonials', idx, 'quote', val)} />"
+                </blockquote>
+              </div>
+            ))}
+          </div>
+
+          {/* Testimonial Attribution & Navigation */}
+          <div className="flex flex-col items-center gap-10">
+            <div className="relative h-6 flex items-center justify-center">
+              {content.testimonials.items.map((t, idx) => (
+                <span 
+                  key={t.id} 
+                  className={`absolute whitespace-nowrap text-[9px] md:text-[10px] tracking-[0.8em] uppercase font-bold text-gold transition-all duration-500 ${idx === activeTestimonial ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2 pointer-events-none'}`}
+                >
+                  <EditableText isEditing={isEditorMode} value={t.author} onSave={(val) => updateListItem('testimonials', idx, 'author', val)} />
+                </span>
+              ))}
+            </div>
+
+            {/* NAVIGATION CONTROLS (THE "SWAP" BUTTONS) */}
+            <div className="flex items-center gap-16">
+              <button 
+                onClick={prevTestimonial} 
+                className="group flex items-center justify-center text-[#FDFCF0]/30 hover:text-gold transition-all duration-300 p-2 transform hover:-translate-x-1" 
+                aria-label="Previous Review"
+              >
+                <ChevronLeft size={36} strokeWidth={1} className="transition-transform group-hover:scale-110" />
+              </button>
+              <button 
+                onClick={nextTestimonial} 
+                className="group flex items-center justify-center text-[#FDFCF0]/30 hover:text-gold transition-all duration-300 p-2 transform hover:translate-x-1" 
+                aria-label="Next Review"
+              >
+                <ChevronRight size={36} strokeWidth={1} className="transition-transform group-hover:scale-110" />
+              </button>
+            </div>
           </div>
         </div>
       </section>
@@ -352,7 +557,7 @@ const App: React.FC = () => {
       <footer id="contact" className="py-24 px-6 bg-[#05080A] border-t border-white/5 scroll-mt-24">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-12">
           <div>
-            <a href="#hero" onClick={(e) => scrollToSection(e, 'hero')} className="font-serif text-3xl tracking-[0.5em] uppercase text-[#FDFCF0] font-light mb-4 block">NADAL</a>
+            <a href="#hero" onClick={(e) => scrollToSection(null, 'hero')} className="font-serif text-3xl tracking-[0.5em] uppercase text-[#FDFCF0] font-light mb-4 block">NADAL</a>
             <p className="text-[9px] tracking-[0.2em] text-[#FDFCF0]/30 uppercase mb-8">Balearic Yacht Charters · Est. 1984</p>
             <div className="flex gap-6 items-center">
               <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-gold hover:text-white transition-all"><Instagram size={20} /></a>
@@ -363,7 +568,7 @@ const App: React.FC = () => {
              <div className="flex flex-col gap-3">
                <span className="text-gold">Inquiries</span>
                <a href={`tel:${content.contact.phone}`} className="hover:text-white"><EditableText isEditing={isEditorMode} value={content.contact.phone} onSave={(val) => updateField('contact', 'phone', val)} /></a>
-               <a href={`mailto:${content.contact.email}`} className="hover:text-white uppercase"><EditableText isEditing={isEditorMode} value={content.contact.email} onSave={(val) => updateField('contact', 'email', val)} /></a>
+               <a href={whatsappUrl} target="_blank" className="hover:text-white uppercase">Professional Inquiry</a>
              </div>
              <div className="flex flex-col gap-3 max-w-xs">
                <span className="text-gold">Address</span>

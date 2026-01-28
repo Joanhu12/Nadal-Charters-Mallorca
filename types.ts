@@ -1,4 +1,3 @@
-
 export interface CharterItem {
   id: string;
   title: string;

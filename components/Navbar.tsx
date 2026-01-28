@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Menu, X } from 'lucide-react';
 
@@ -9,7 +8,7 @@ export const Navbar: React.FC = () => {
     { name: 'Fleet', href: '#fleet' },
     { name: 'Harbors', href: '#destinations' },
     { name: 'Concierge', href: '#concierge' },
-    { name: 'Book', href: '#contact' },
+    { name: 'Contact', href: '#contact' },
   ];
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
@@ -31,7 +30,6 @@ export const Navbar: React.FC = () => {
         behavior: 'smooth'
       });
       
-      // Update URL without jump
       window.history.pushState(null, '', href);
     }
   };
@@ -49,7 +47,7 @@ export const Navbar: React.FC = () => {
       </div>
       
       <div className="hidden md:flex items-center gap-10">
-        <div className="flex gap-10 text-[9px] tracking-[0.4em] uppercase font-medium text-[#FDFCF0]/50">
+        <div className="flex gap-8 text-[8px] tracking-[0.4em] uppercase font-medium text-[#FDFCF0]/50">
           {navLinks.map((link) => (
             <a 
               key={link.name} 
@@ -62,13 +60,15 @@ export const Navbar: React.FC = () => {
             </a>
           ))}
         </div>
-        <a 
-          href="#contact" 
-          onClick={(e) => handleNavClick(e, '#contact')}
+        <button 
+          onClick={() => {
+            const btn = document.getElementById('global-book-trigger');
+            if (btn) btn.click();
+          }}
           className="ml-4 border border-[#C5A27D]/30 px-6 py-2.5 text-[9px] tracking-[0.4em] uppercase font-bold text-[#C5A27D] hover:bg-[#C5A27D] hover:text-[#080C10] transition-all duration-500"
         >
-          Reserve
-        </a>
+          Book
+        </button>
       </div>
 
       <button className="md:hidden text-[#C5A27D] p-2" onClick={() => setIsOpen(!isOpen)} aria-label="Toggle Menu">
@@ -91,13 +91,16 @@ export const Navbar: React.FC = () => {
             {link.name}
           </a>
         ))}
-        <a 
-          href="#contact" 
-          onClick={(e) => handleNavClick(e, '#contact')}
+        <button 
+          onClick={() => {
+            setIsOpen(false);
+            const btn = document.getElementById('global-book-trigger');
+            if (btn) btn.click();
+          }}
           className="mt-4 border border-[#C5A27D] px-10 py-4 text-[10px] tracking-[0.4em] uppercase font-bold text-[#C5A27D]"
         >
           Book Now
-        </a>
+        </button>
       </div>
     </nav>
   );
