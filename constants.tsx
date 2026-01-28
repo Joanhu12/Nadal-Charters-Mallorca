@@ -6,13 +6,13 @@ export const INITIAL_CONTENT: AppContent = {
     subtitle: "Exclusive yacht charters across the Balearic Isles. Elegance, curated for the horizon.",
     ctaPrimary: "Reserve Your Voyage",
     ctaSecondary: "The Fleet",
-    bgImage: "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&q=80&w=2000"
+    bgImage: "https://images.unsplash.com/photo-1540946485063-a40da27545f8?auto=format&fit=crop&q=80&w=2000"
   },
   about: {
     heading: "Elegance on Water",
     subheading: "NADAL CHARTERS",
     text: "We provide the vessel. The Mediterranean provides the rest. Experience the islands through a lens of absolute privacy and effortless luxury.",
-    image: "https://images.unsplash.com/photo-1605281317010-fe5ffe798151?auto=format&fit=crop&q=80&w=1200"
+    image: "https://images.unsplash.com/photo-1562285060-2217814da611?auto=format&fit=crop&q=80&w=1200"
   },
   fleet: {
     heading: "The Charter Collection",

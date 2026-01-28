@@ -29,8 +29,9 @@ interface PendingImageUpdate {
 }
 
 const App: React.FC = () => {
+  // Using v9 to ensure the specific image updates are forced onto the client immediately
   const [content, setContent] = useState<AppContent>(() => {
-    const saved = localStorage.getItem('nadal_content');
+    const saved = localStorage.getItem('nadal_content_v9');
     if (saved) {
       try {
         return JSON.parse(saved);
@@ -55,7 +56,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     try {
-      localStorage.setItem('nadal_content', JSON.stringify(content));
+      localStorage.setItem('nadal_content_v9', JSON.stringify(content));
     } catch (e) {
       console.warn("Storage limit reached. Changes will be kept in session.");
     }
@@ -171,7 +172,7 @@ const App: React.FC = () => {
   const resetToDefaults = () => {
     if (confirm("Reset visuals and text to original defaults?")) {
       setContent(INITIAL_CONTENT);
-      localStorage.removeItem('nadal_content');
+      localStorage.removeItem('nadal_content_v9');
       setIsEditorMode(false);
     }
   };
