@@ -29,7 +29,7 @@ export interface PendingImageUpdate {
 
 const App: React.FC = () => {
   const [content, setContent] = useState<AppContent>(() => {
-    const saved = localStorage.getItem('nadal_content_v65');
+    const saved = localStorage.getItem('nadal_content_v70');
     if (saved) {
       try {
         return JSON.parse(saved);
@@ -52,7 +52,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     try {
-      localStorage.setItem('nadal_content_v65', JSON.stringify(content));
+      localStorage.setItem('nadal_content_v70', JSON.stringify(content));
     } catch (e) {
       console.warn("Storage limit reached. Changes will be kept in session.");
     }
@@ -168,7 +168,7 @@ const App: React.FC = () => {
   const resetToDefaults = () => {
     if (confirm("Reset visuals and text to original defaults?")) {
       setContent(INITIAL_CONTENT);
-      localStorage.removeItem('nadal_content_v65');
+      localStorage.removeItem('nadal_content_v70');
       setIsEditorMode(false);
       setSelectedYacht(null);
     }

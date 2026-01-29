@@ -50,7 +50,7 @@ export const INITIAL_CONTENT: AppContent = {
         id: "5",
         title: "Kinki",
         subtitle: "High-Performance · Sunseeker Predator 92",
-        image: "https://imageresizer.yachtsbt.com/boats/67d9496ca544b032100a58ea/67d94de455478f62060d2f64.jpg?method=fit&width=2044&height=900&format=webp",
+        image: "https://imageresizer.yachtsbt.com/boats/67d9496ca544b032100a58ea/67d94de355478f62060d2f56.jpg?method=fit&width=3066&height=1350&format=webp",
         price: "€11,250 / Day",
         details: "4 Cabins · 12 Guests",
         length: "28.15m",
@@ -58,6 +58,7 @@ export const INITIAL_CONTENT: AppContent = {
         crew: "4 Professionals",
         fullDescription: "The Sunseeker Predator 92 'Kinki' is a masterpiece of aggressive styling and British marine engineering. Built for those who demand performance without compromising on comfort, she features a striking silver hull and expansive exterior decks perfect for Balearic entertaining. Her interior is a blend of modern luxury and functional design, accommodating 8 guests in 4 exquisitely appointed cabins.",
         gallery: [
+          "https://imageresizer.yachtsbt.com/boats/67d9496ca544b032100a58ea/67d94de355478f62060d2f56.jpg?method=fit&width=3066&height=1350&format=webp",
           "https://imageresizer.yachtsbt.com/boats/67d9496ca544b032100a58ea/67d94de455478f62060d2f64.jpg?method=fit&width=2044&height=900&format=webp",
           "https://imageresizer.yachtsbt.com/boats/67d9496ca544b032100a58ea/67d94de355478f62060d2f5a.jpg?method=fit&width=2044&height=900&format=webp",
           "https://imageresizer.yachtsbt.com/boats/67d9496ca544b032100a58ea/67d94de455478f62060d2f5e.jpg?method=fit&width=2044&height=900&format=webp",
@@ -134,7 +135,7 @@ export const INITIAL_CONTENT: AppContent = {
         id: "11",
         title: "Amani",
         subtitle: "Astondoa 72 GLX · Timeless Luxury",
-        image: "https://www.smartcharteribiza.com/wp-content/uploads/2025/06/72_Astondoa_Amani_7.png",
+        image: "https://www.smartcharteribiza.com/wp-content/uploads/2025/06/2001-astondoa-72-glx-power-7316347-20241009065712320-1_XLARGE-e1750254075618.jpg",
         price: "€6,599 / Day",
         details: "4 Cabins · 10 + 2 Crew",
         length: "23m",
@@ -142,11 +143,11 @@ export const INITIAL_CONTENT: AppContent = {
         crew: "2 Professionals",
         fullDescription: "Amani is an exquisite Astondoa 72 GLX, recently refitted to offer an unparalleled Mediterranean experience. With 2 double and 2 twin cabins, she provides a sophisticated sanctuary for 10 guests. Her timeless lines and expansive deck space make her the perfect choice for an elegant Balearic escape. Fuel is not included; estimated 1.5H cruising for a standard day trip.",
         gallery: [
+          "https://www.smartcharteribiza.com/wp-content/uploads/2025/06/2001-astondoa-72-glx-power-7316347-20241009065712320-1_XLARGE-e1750254075618.jpg",
           "https://www.smartcharteribiza.com/wp-content/uploads/2025/06/72_Astondoa_Amani_7.png",
           "https://www.smartcharteribiza.com/wp-content/uploads/2025/06/WhatsApp-Image-2025-05-20-at-18.31.33-7.jpeg",
           "https://www.smartcharteribiza.com/wp-content/uploads/2025/06/WhatsApp-Image-2025-05-20-at-18.31.32-1.jpeg",
-          "https://www.smartcharteribiza.com/wp-content/uploads/2025/06/WhatsApp-Image-2025-05-20-at-18.31.33-1.jpeg",
-          "https://www.smartcharteribiza.com/wp-content/uploads/2025/06/2001-astondoa-72-glx-power-7316347-20241009065712320-1_XLARGE-e1750254075618.jpg"
+          "https://www.smartcharteribiza.com/wp-content/uploads/2025/06/WhatsApp-Image-2025-05-20-at-18.31.33-1.jpeg"
         ],
         specs: [
           { label: "Cruising Speed", value: "15 Knots" },
@@ -190,7 +191,16 @@ export const INITIAL_CONTENT: AppContent = {
         year: "2016 (Refit 2023)",
         crew: "3 Professionals",
         fullDescription: "Experience unparalleled luxury aboard Gran Abe II, an exquisite Azimut 77S yacht that epitomises a seamless blend of high performance, elegant design, and cutting-edge technology. This remarkable 23.6-metre vessel is tailor-made for exploring the vibrant waters of the Mediterranean, offering both thrilling speed and exceptional comfort. From anchoring in secluded coves to cruising between idyllic island destinations at an impressive top speed of 35 knots, Gran Abe II promises an unforgettable yachting experience, ideal for families and groups of friends.",
-        gallery: ["https://cdn.bluebnc.com/images/boat/3022/6c9f9c51-6e47-47a9-8548-e24fe183098c-large.webp"],
+        gallery: [
+          "https://cdn.bluebnc.com/images/boat/3022/6c9f9c51-6e47-47a9-8548-e24fe183098c-large.webp",
+          "https://cdn.bluebnc.com/images/boat/3022/4476ea64-9280-4a88-9584-a6b2778f52dd-large.webp",
+          "https://cdn.bluebnc.com/images/boat/3022/d5bd65ad-bc0e-41bb-ad3b-f37d900c1ae2-large.webp",
+          "https://cdn.bluebnc.com/images/boat/3022/75c71694-f5d4-445f-b405-7cfafceafb63-large.webp",
+          "https://cdn.bluebnc.com/images/boat/3022/7deaae1c-3dc8-4bb4-ae64-795ae52257e6-large.webp",
+          "https://cdn.bluebnc.com/images/boat/3022/c1f5cf24-2de2-49e0-b861-eb87673ac000-large.webp",
+          "https://cdn.bluebnc.com/images/boat/3022/6ff63740-dd88-43e0-a9d7-099e11401cac-large.webp",
+          "https://cdn.bluebnc.com/images/boat/3022/a3b24997-e1bc-4964-9803-2bc03a865799-large.webp"
+        ],
         specs: [
           { label: "Model", value: "Azimut 77S" },
           { label: "Length", value: "77′ / 23m" },
@@ -214,7 +224,17 @@ export const INITIAL_CONTENT: AppContent = {
         year: "1997",
         crew: "Professional Team",
         fullDescription: "Maioara 26 is a classic 25.5-meter motor yacht that offers timeless elegance and spacious luxury. Built in 1997 and meticulously maintained, she provides a stable and comfortable platform for exploring the Balearics. With accommodation for up to 10 guests across 4 cabins and a professional crew, she is the perfect choice for extended family charters or elegant day trips with a classic flair.",
-        gallery: ["https://imageresizer.yachtsbt.com/boats/649d2371edd3bcc12c065706/666014ec474902d77c0c526c.jpg?method=fit&width=2044&height=900&format=webp"],
+        gallery: [
+          "https://imageresizer.yachtsbt.com/boats/649d2371edd3bcc12c065706/666014ec474902d77c0c526c.jpg?method=fit&width=2044&height=900&format=webp",
+          "https://imageresizer.yachtsbt.com/boats/649d2371edd3bcc12c065706/666014ec474902d77c0c526a.jpg?method=fit&width=2044&height=900&format=webp",
+          "https://imageresizer.yachtsbt.com/boats/649d2371edd3bcc12c065706/666014ed474902d77c0c5274.jpg?method=fit&width=2044&height=900&format=webp",
+          "https://imageresizer.yachtsbt.com/boats/649d2371edd3bcc12c065706/666014ee474902d77c0c527e.jpg?method=fit&width=2044&height=900&format=webp",
+          "https://imageresizer.yachtsbt.com/boats/649d2371edd3bcc12c065706/666014ef474902d77c0c5280.jpg?method=fit&width=2044&height=900&format=webp",
+          "https://imageresizer.yachtsbt.com/boats/649d2371edd3bcc12c065706/666014ed474902d77c0c5276.jpg?method=fit&width=2044&height=900&format=webp",
+          "https://imageresizer.yachtsbt.com/boats/649d2371edd3bcc12c065706/666014ee474902d77c0c527a.jpg?method=fit&width=2044&height=900&format=webp",
+          "https://imageresizer.yachtsbt.com/boats/649d2371edd3bcc12c065706/666014ee474902d77c0c527c.jpg?method=fit&width=2044&height=900&format=webp",
+          "https://imageresizer.yachtsbt.com/boats/649d2371edd3bcc12c065706/666014ee474902d77c0c5278.jpg?method=fit&width=2044&height=900&format=webp"
+        ],
         specs: [
           { label: "Year", value: "1997" },
           { label: "Draught", value: "1.83 m" },
