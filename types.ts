@@ -1,3 +1,4 @@
+
 export interface YachtSpec {
   label: string;
   value: string;
@@ -11,6 +12,7 @@ export interface CharterItem {
   price: string;
   details: string;
   externalUrl?: string;
+  location?: string;
   // Detail page fields
   fullDescription?: string;
   gallery?: string[];

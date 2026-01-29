@@ -1,4 +1,4 @@
-import { Anchor, Bed, ChevronLeft, ChevronRight, Compass, Droplets, Gauge, Grid, Heart, MapPin, Maximize2, Share2, Users, Wind, X, Zap } from 'lucide-react';
+import { Anchor, Bed, ChevronLeft, ChevronRight, Compass, Droplets, Gauge, Grid, Heart, MapPin, Maximize2, Share2, Users, Wind, X, Zap, MessageCircle } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { CharterItem } from '../types';
 
@@ -145,7 +145,7 @@ export const YachtDetail: React.FC<YachtDetailProps> = ({ yacht, onBack, onBook 
             </h2>
             <div className="flex items-center gap-2.5 text-gold/70 text-[10px] md:text-[12px] tracking-[0.2em] uppercase font-bold">
               <MapPin size={14} className="text-gold" />
-              Ibiza & Formentera
+              {yacht.location || 'Balearic Islands'}
             </div>
           </div>
         </header>
@@ -207,9 +207,9 @@ export const YachtDetail: React.FC<YachtDetailProps> = ({ yacht, onBack, onBook 
         <div className="grid lg:grid-cols-12 gap-16 lg:gap-24">
           
           {/* Information Column */}
-          <div className="lg:col-span-8 space-y-20">
+          <div className="lg:col-span-8 space-y-16">
             
-            {/* Vessel Specifications (Characteristics) - Now at the Top of this section */}
+            {/* Vessel Specifications (Characteristics) */}
             <div className="grid grid-cols-2 md:grid-cols-3 gap-y-16 gap-x-12 pb-20 border-b border-white/10">
               {[
                 { label: 'Length Overall', value: yacht.length, icon: Maximize2 },
@@ -227,6 +227,17 @@ export const YachtDetail: React.FC<YachtDetailProps> = ({ yacht, onBack, onBook 
                    <span className="text-lg md:text-xl font-serif italic text-white/90">{stat.value}</span>
                 </div>
               ))}
+            </div>
+
+            {/* Check Availability Button - Mobile Only */}
+            <div className="md:hidden py-4">
+              <button 
+                onClick={onBook}
+                className="w-full flex items-center justify-center gap-4 bg-transparent border-2 border-[#C5A27D] py-6 rounded-sm text-[#C5A27D] hover:bg-[#C5A27D] hover:text-[#080C10] transition-all duration-500 group shadow-[0_0_40px_rgba(197,162,125,0.1)]"
+              >
+                <MessageCircle size={18} className="group-hover:scale-110 transition-transform" strokeWidth={1.5} />
+                <span className="text-[10px] tracking-[0.5em] uppercase font-black">Check Availability</span>
+              </button>
             </div>
 
             {/* Technical & Amenities Grid */}
@@ -256,7 +267,7 @@ export const YachtDetail: React.FC<YachtDetailProps> = ({ yacht, onBack, onBook 
                </div>
             </div>
 
-            {/* The Experience Narrative - Repositioned to the End and Made Smaller */}
+            {/* The Experience Narrative */}
             <div className="max-w-xl py-10">
               <span className="text-gold text-[7px] tracking-[0.5em] uppercase font-bold block mb-6">THE EXPERIENCE</span>
               <p className="font-serif text-base md:text-lg italic font-light leading-relaxed text-white/60">
