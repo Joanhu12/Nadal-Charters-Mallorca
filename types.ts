@@ -1,3 +1,8 @@
+export interface YachtSpec {
+  label: string;
+  value: string;
+}
+
 export interface CharterItem {
   id: string;
   title: string;
@@ -5,6 +10,15 @@ export interface CharterItem {
   image: string;
   price: string;
   details: string;
+  externalUrl?: string;
+  // Detail page fields
+  fullDescription?: string;
+  gallery?: string[];
+  specs?: YachtSpec[];
+  amenities?: string[];
+  length?: string;
+  year?: string;
+  crew?: string;
 }
 
 export interface Testimonial {

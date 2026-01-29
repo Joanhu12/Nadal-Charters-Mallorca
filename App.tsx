@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   X, 
@@ -15,14 +14,12 @@ import {
   Instagram,
   Music as TiktokIcon 
 } from 'lucide-react';
-import { AppContent } from './types';
+import { AppContent, CharterItem } from './types';
 import { INITIAL_CONTENT } from './constants';
 import { Navbar } from './components/Navbar';
 import { EditableText } from './components/EditableText';
+import { YachtDetail } from './components/YachtDetail';
 
-/* 
- * Fixed broken interface definition and mangled import statement 
- */
 export interface PendingImageUpdate {
   section: keyof AppContent;
   field: string;
@@ -31,9 +28,8 @@ export interface PendingImageUpdate {
 }
 
 const App: React.FC = () => {
-  // Bumping version to v31 to force content refresh with the new fleet specifications
   const [content, setContent] = useState<AppContent>(() => {
-    const saved = localStorage.getItem('nadal_content_v31');
+    const saved = localStorage.getItem('nadal_content_v65');
     if (saved) {
       try {
         return JSON.parse(saved);
@@ -50,15 +46,13 @@ const App: React.FC = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [showLabel, setShowLabel] = useState(false);
   const [activeTestimonial, setActiveTestimonial] = useState(0);
-  const [showBookingOverlay, setShowBookingOverlay] = useState(false);
-  const [bookingStep, setBookingStep] = useState(1);
-  const [bookingData, setBookingData] = useState({ location: '', duration: '' });
+  const [selectedYacht, setSelectedYacht] = useState<CharterItem | null>(null);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     try {
-      localStorage.setItem('nadal_content_v31', JSON.stringify(content));
+      localStorage.setItem('nadal_content_v65', JSON.stringify(content));
     } catch (e) {
       console.warn("Storage limit reached. Changes will be kept in session.");
     }
@@ -174,8 +168,9 @@ const App: React.FC = () => {
   const resetToDefaults = () => {
     if (confirm("Reset visuals and text to original defaults?")) {
       setContent(INITIAL_CONTENT);
-      localStorage.removeItem('nadal_content_v31');
+      localStorage.removeItem('nadal_content_v65');
       setIsEditorMode(false);
+      setSelectedYacht(null);
     }
   };
 
@@ -199,104 +194,40 @@ const App: React.FC = () => {
     return <img src={src} className={`${className} ${isCircle ? 'rounded-full' : ''}`} onError={() => setError(true)} alt="Asset" />;
   };
 
-  const handleFinalBooking = () => {
-    const loc = bookingData.location;
-    const dur = bookingData.duration;
-    
-    let specificInfo = "";
-    if (loc && dur) {
-      specificInfo = `\nSpecifically, I am interested in a ${dur.toLowerCase()} in ${loc}.`;
-    } else if (loc) {
-      specificInfo = `\nSpecifically, I am interested in a charter in ${loc}.`;
-    } else if (dur) {
-      specificInfo = `\nSpecifically, I am interested in a ${dur.toLowerCase()}.`;
+  const handleDirectWhatsApp = (yacht?: CharterItem) => {
+    let message = "Hello,\n\nI would like to enquire about a private yacht charter in the Balearic Islands.\n\nKind regards.";
+    if (yacht) {
+      message = `Hello,\n\nI am interested in checking the availability for the ${yacht.title}.\n\nPlease let me know the details.\n\nKind regards.`;
     }
-
-    const messageTemplate = `Hello,\n\nI would like to enquire about a private yacht charter in the Balearic Islands.${specificInfo}\n\nKind regards.`;
-    openWhatsApp(messageTemplate);
-    setShowBookingOverlay(false);
-    setBookingStep(1);
-    setBookingData({ location: '', duration: '' });
-  };
-
-  const openWhatsApp = (message: string) => {
     const encodedMsg = encodeURIComponent(message);
     const whatsappLink = `https://wa.me/${content.contact.whatsapp.replace(/\s+/g, '')}?text=${encodedMsg}`;
     window.open(whatsappLink, '_blank');
   };
 
-  const handleFleetClick = (yachtTitle: string) => {
+  const handleFleetClick = (item: CharterItem) => {
     if (isEditorMode) return;
-    const message = `Hello,\n\nI would like to enquire about the ${yachtTitle} private yacht charter in the Balearic Islands.\n\nKind regards.`;
-    openWhatsApp(message);
+    setSelectedYacht(item);
   };
 
-  const defaultMsg = "Hello,\n\nI would like to enquire about a private yacht charter in the Balearic Islands.\n\nKind regards.";
-  const whatsappUrl = `https://wa.me/${content.contact.whatsapp.replace(/\s+/g, '')}?text=${encodeURIComponent(defaultMsg)}`;
+  const whatsappUrl = `https://wa.me/${content.contact.whatsapp.replace(/\s+/g, '')}?text=${encodeURIComponent("Hello, I'd like to inquire about a charter.")}`;
   const tiktokUrl = "https://www.tiktok.com/@nadalcharters";
+
+  if (selectedYacht) {
+    return (
+      <YachtDetail 
+        yacht={selectedYacht} 
+        onBack={() => setSelectedYacht(null)} 
+        onBook={() => handleDirectWhatsApp(selectedYacht)} 
+      />
+    );
+  }
 
   return (
     <div className="relative overflow-x-hidden min-h-screen bg-[#080C10] text-[#FDFCF0]">
       <Navbar />
 
-      {/* GLOBAL BOOKING TRIGGER (HIDDEN) */}
-      <button id="global-book-trigger" className="hidden" onClick={() => setShowBookingOverlay(true)} />
+      <button id="global-book-trigger" className="hidden" onClick={() => handleDirectWhatsApp()} />
 
-      {/* BOOKING OVERLAY */}
-      {showBookingOverlay && (
-        <div className="fixed inset-0 z-[120] flex items-center justify-center p-6 bg-black/95 backdrop-blur-2xl transition-all duration-500">
-          <div className="bg-[#0D1217] border border-[#C5A27D]/20 p-8 md:p-12 max-w-xl w-full shadow-2xl relative">
-            <button onClick={() => setShowBookingOverlay(false)} className="absolute top-6 right-6 text-white/40 hover:text-white transition-colors"><X size={24} /></button>
-            
-            <div className="text-center mb-10">
-              <span className="text-[10px] tracking-[0.4em] uppercase text-gold block mb-4">Voyage Selection</span>
-              <h3 className="font-serif text-4xl italic mb-2">Configure Your Experience</h3>
-            </div>
-
-            {bookingStep === 1 && (
-              <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                <p className="text-center text-[10px] tracking-[0.3em] uppercase opacity-40 mb-8">Choose Location</p>
-                <div className="grid grid-cols-2 gap-4">
-                  {['Mallorca', 'Ibiza & Formentera'].map((loc) => (
-                    <button 
-                      key={loc}
-                      onClick={() => { setBookingData({ ...bookingData, location: loc }); setBookingStep(2); }}
-                      className="group border border-white/5 bg-white/5 py-10 px-4 flex flex-col items-center gap-4 hover:border-gold/40 hover:bg-gold/5 transition-all duration-300"
-                    >
-                      <MapPin size={24} className="text-gold/60 group-hover:text-gold transition-colors" />
-                      <span className="text-[11px] tracking-[0.2em] uppercase font-bold">{loc}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {bookingStep === 2 && (
-              <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                <p className="text-center text-[10px] tracking-[0.3em] uppercase opacity-40 mb-8">Charter Duration</p>
-                <div className="grid grid-cols-2 gap-4">
-                  {['Daily Charter', 'Weekly Charter'].map((dur) => (
-                    <button 
-                      key={dur}
-                      onClick={() => { 
-                        setBookingData({ ...bookingData, duration: dur });
-                        setTimeout(() => handleFinalBooking(), 100);
-                      }}
-                      className="group border border-white/5 bg-white/5 py-10 px-4 flex flex-col items-center gap-4 hover:border-gold/40 hover:bg-gold/5 transition-all duration-300"
-                    >
-                      <Anchor size={24} className="text-gold/60 group-hover:text-gold transition-colors" />
-                      <span className="text-[11px] tracking-[0.2em] uppercase font-bold">{dur}</span>
-                    </button>
-                  ))}
-                </div>
-                <button onClick={() => setBookingStep(1)} className="w-full text-[9px] tracking-[0.3em] uppercase text-white/30 hover:text-white pt-4">Back to Locations</button>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* WHATSAPP FLOAT */}
       <div className="fixed bottom-6 right-6 z-[80] flex items-center gap-3">
         <div className={`transition-all duration-1000 transform ${showLabel ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4 pointer-events-none'}`}>
           <div className="bg-[#151B22]/80 backdrop-blur-md border border-white/10 py-1.5 px-3 rounded-full flex items-center gap-2 shadow-2xl">
@@ -313,7 +244,6 @@ const App: React.FC = () => {
         </a>
       </div>
 
-      {/* EDITOR CONTROLS */}
       <div className="fixed bottom-6 left-6 z-[70] flex flex-col gap-3">
         {isEditorMode && (
           <button onClick={resetToDefaults} className="p-2.5 rounded-full bg-white/5 border border-white/5 text-white/30 hover:text-white transition-all">
@@ -325,7 +255,6 @@ const App: React.FC = () => {
         </button>
       </div>
 
-      {/* IMAGE MODAL */}
       {pendingImage && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/95 backdrop-blur-xl">
           <div className="bg-[#0D1217] border border-[#C5A27D]/30 p-8 max-w-lg w-full shadow-2xl relative">
@@ -343,7 +272,6 @@ const App: React.FC = () => {
         </div>
       )}
 
-      {/* HERO */}
       <section id="hero" className="relative h-[100vh] w-full flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 bg-cover bg-center transition-transform duration-[10s] scale-110 animate-[slowZoom_20s_infinite_alternate]" style={{ backgroundImage: `url(${content.hero.bgImage})` }}>
           <div className="absolute inset-0 bg-[#080C10]/40" />
@@ -356,7 +284,7 @@ const App: React.FC = () => {
             <EditableText isEditing={isEditorMode} value={content.hero.subtitle} onSave={(val) => updateField('hero', 'subtitle', val)} />
           </p>
           <div className="flex flex-col md:flex-row gap-8 justify-center items-center">
-            <button onClick={() => setShowBookingOverlay(true)} className="bg-[#FDFCF0] text-[#080C10] py-4 px-12 text-[10px] tracking-[0.4em] uppercase font-bold hover:bg-[#C5A27D] transition-colors shadow-xl">
+            <button onClick={() => handleDirectWhatsApp()} className="bg-[#FDFCF0] text-[#080C10] py-4 px-12 text-[10px] tracking-[0.4em] uppercase font-bold hover:bg-[#C5A27D] transition-colors shadow-xl">
               <EditableText isEditing={isEditorMode} value={content.hero.ctaPrimary} onSave={(val) => updateField('hero', 'ctaPrimary', val)} />
             </button>
             <a href="#fleet" onClick={(e) => scrollToSection(e, 'fleet')} className="text-[10px] tracking-[0.4em] uppercase text-[#FDFCF0] font-bold border-b border-white/20 pb-1 hover:border-white transition-all">
@@ -367,7 +295,6 @@ const App: React.FC = () => {
         {isEditorMode && <button onClick={() => openImageEditor('hero', 'bgImage', content.hero.bgImage)} className="absolute bottom-12 right-12 z-20 bg-black/60 p-3 text-[9px] uppercase tracking-[0.3em] text-white border border-white/10">Replace Frame</button>}
       </section>
 
-      {/* ABOUT */}
       <section id="about" className="py-32 md:py-48 px-6 bg-[#080C10] scroll-mt-24">
         <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-24 items-center">
           <div>
@@ -380,14 +307,12 @@ const App: React.FC = () => {
             <p className="text-base text-[#FDFCF0]/70 font-light leading-relaxed mb-10">
               <EditableText isEditing={isEditorMode} value={content.about.text} onSave={(val) => updateField('about', 'text', val)} tag="span" />
             </p>
-            <a 
-              href={whatsappUrl} 
-              target="_blank" 
-              rel="noopener noreferrer"
+            <button 
+              onClick={() => handleDirectWhatsApp()}
               className="inline-block border border-[#C5A27D] py-4 px-10 text-[9px] tracking-[0.4em] uppercase font-bold text-[#C5A27D] hover:bg-[#C5A27D] hover:text-[#080C10] transition-all duration-500"
             >
               Talk to an expert
-            </a>
+            </button>
           </div>
           <div className="relative group overflow-hidden border border-white/5">
             <ImageFallback src={content.about.image} className="w-full aspect-square object-cover" />
@@ -396,43 +321,43 @@ const App: React.FC = () => {
         </div>
       </section>
 
-      {/* FLEET COLLECTION */}
       <section id="fleet" className="py-32 px-6 bg-[#080C10] border-t border-white/5 scroll-mt-24">
         <div className="max-w-7xl mx-auto">
           <h2 className="font-serif text-4xl md:text-7xl mb-24 italic font-light text-center">
             <EditableText isEditing={isEditorMode} value={content.fleet.heading} onSave={(val) => updateField('fleet', 'heading', val)} />
           </h2>
-          <div className="grid md:grid-cols-3 gap-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {content.fleet.items.map((item, idx) => (
-              <div key={item.id} className="group">
+              <div key={item.id} className="group flex flex-col">
                 <div 
-                  className={`relative overflow-hidden aspect-[3/4] mb-8 border border-white/5 bg-black ${!isEditorMode ? 'cursor-pointer' : ''}`}
-                  onClick={() => handleFleetClick(item.title)}
+                  className={`relative overflow-hidden aspect-square mb-6 border border-white/5 bg-black ${!isEditorMode ? 'cursor-pointer' : ''}`}
+                  onClick={() => handleFleetClick(item)}
                 >
-                  <ImageFallback src={item.image} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" />
+                  <ImageFallback src={item.image} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
+                  <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition-all duration-500" />
+                  
+                  <div className="absolute inset-0 flex flex-col justify-end p-8 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90 group-hover:opacity-100 transition-opacity">
+                    <h3 className="font-serif text-3xl italic mb-1 tracking-tight">
+                      <EditableText isEditing={isEditorMode} value={item.title} onSave={(val) => updateListItem('fleet', idx, 'title', val)} />
+                    </h3>
+                    <div className="flex justify-between items-center w-full">
+                       <span className="text-[9px] tracking-[0.4em] uppercase text-white/50 font-bold">
+                         <EditableText isEditing={isEditorMode} value={item.subtitle} onSave={(val) => updateListItem('fleet', idx, 'subtitle', val)} />
+                       </span>
+                       <span className="text-gold font-serif italic text-lg">
+                         <EditableText isEditing={isEditorMode} value={item.price.split(' ')[0]} onSave={(val) => updateListItem('fleet', idx, 'price', val)} />
+                       </span>
+                    </div>
+                  </div>
+
                   {isEditorMode && (
                     <button 
                       onClick={(e) => { e.stopPropagation(); openImageEditor('fleet', 'image', item.image, idx); }} 
                       className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center text-[9px] tracking-[0.4em] uppercase font-bold text-white z-20"
                     >
-                      Curate
+                      Update Asset
                     </button>
                   )}
-                  {!isEditorMode && (
-                    <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                       <span className="text-[10px] tracking-[0.4em] uppercase text-white font-bold border border-white/40 px-6 py-3 bg-black/20 backdrop-blur-sm">View Details</span>
-                    </div>
-                  )}
-                </div>
-                <div className="flex justify-between items-end px-2">
-                  <div>
-                    <h3 className="font-serif text-2xl italic mb-1"><EditableText isEditing={isEditorMode} value={item.title} onSave={(val) => updateListItem('fleet', idx, 'title', val)} /></h3>
-                    <p className="text-[9px] tracking-[0.3em] uppercase text-white/40"><EditableText isEditing={isEditorMode} value={item.subtitle} onSave={(val) => updateListItem('fleet', idx, 'subtitle', val)} /></p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-[10px] font-bold text-gold tracking-widest uppercase"><EditableText isEditing={isEditorMode} value={item.price} onSave={(val) => updateListItem('fleet', idx, 'price', val)} /></p>
-                    <p className="text-[9px] text-white/30 tracking-widest uppercase"><EditableText isEditing={isEditorMode} value={item.details} onSave={(val) => updateListItem('fleet', idx, 'details', val)} /></p>
-                  </div>
                 </div>
               </div>
             ))}
@@ -440,7 +365,6 @@ const App: React.FC = () => {
         </div>
       </section>
 
-      {/* HARBOURS / DESTINATIONS */}
       <section id="destinations" className="py-32 px-6 bg-[#0A0E12] border-t border-white/5 scroll-mt-24">
         <div className="max-w-7xl mx-auto">
           <h2 className="font-serif text-4xl md:text-6xl mb-24 italic font-light text-center">
@@ -463,7 +387,6 @@ const App: React.FC = () => {
         </div>
       </section>
 
-      {/* CONCIERGE */}
       <section id="concierge" className="py-32 md:py-48 px-6 bg-[#080C10] border-t border-white/5 scroll-mt-24 relative overflow-hidden">
         <div className="absolute inset-0 opacity-30">
           <ImageFallback src={content.concierge.image} className="w-full h-full object-cover grayscale" />
@@ -476,23 +399,18 @@ const App: React.FC = () => {
           <p className="text-base md:text-xl text-[#FDFCF0]/70 font-light leading-relaxed mb-12 max-w-2xl mx-auto">
             <EditableText isEditing={isEditorMode} value={content.concierge.text} onSave={(val) => updateField('concierge', 'text', val)} />
           </p>
-          <button onClick={() => setShowBookingOverlay(true)} className="border border-[#C5A27D] py-5 px-14 text-[10px] tracking-[0.4em] uppercase font-bold text-[#C5A27D] hover:bg-[#C5A27D] hover:text-[#080C10] transition-all duration-500">
+          <button onClick={() => handleDirectWhatsApp()} className="border border-[#C5A27D] py-5 px-14 text-[10px] tracking-[0.4em] uppercase font-bold text-[#C5A27D] hover:bg-[#C5A27D] hover:text-[#080C10] transition-all duration-500">
             Request Service
           </button>
           {isEditorMode && <button onClick={() => openImageEditor('concierge', 'image', content.concierge.image)} className="absolute -bottom-12 right-0 bg-black/60 p-3 text-[9px] uppercase tracking-[0.3em] text-white border border-white/10">Frame Asset</button>}
         </div>
       </section>
 
-      {/* TESTIMONIALS - CLEAN ELITE LAYOUT */}
       <section id="testimonials" className="py-32 md:py-48 px-6 bg-[#080C10] border-t border-white/5 scroll-mt-24 relative overflow-hidden">
         <div className="max-w-4xl mx-auto relative flex flex-col items-center">
-          
-          {/* Subtle Frame Quote Background */}
           <div className="absolute top-0 opacity-[0.04] text-gold -translate-y-16 select-none pointer-events-none">
             <Quote size={240} />
           </div>
-
-          {/* Testimonial Author Image Container */}
           <div className="relative w-28 h-28 md:w-36 md:h-36 mb-16 z-10">
             {content.testimonials.items.map((t, idx) => (
               <div 
@@ -507,8 +425,6 @@ const App: React.FC = () => {
               </div>
             ))}
           </div>
-
-          {/* Testimonial Text Container */}
           <div className="relative w-full px-4 mb-16 min-h-[120px] md:min-h-[140px] flex items-center justify-center">
             {content.testimonials.items.map((t, idx) => (
               <div 
@@ -521,8 +437,6 @@ const App: React.FC = () => {
               </div>
             ))}
           </div>
-
-          {/* Testimonial Attribution & Navigation */}
           <div className="flex flex-col items-center gap-10">
             <div className="relative h-6 flex items-center justify-center">
               {content.testimonials.items.map((t, idx) => (
@@ -534,8 +448,6 @@ const App: React.FC = () => {
                 </span>
               ))}
             </div>
-
-            {/* NAVIGATION CONTROLS (THE "SWAP" BUTTONS) */}
             <div className="flex items-center gap-16">
               <button 
                 onClick={prevTestimonial} 
@@ -556,7 +468,6 @@ const App: React.FC = () => {
         </div>
       </section>
 
-      {/* FOOTER */}
       <footer id="contact" className="py-24 px-6 bg-[#05080A] border-t border-white/5 scroll-mt-24">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-12">
           <div>
@@ -571,7 +482,7 @@ const App: React.FC = () => {
              <div className="flex flex-col gap-3">
                <span className="text-gold">Inquiries</span>
                <a href={`tel:${content.contact.phone}`} className="hover:text-white"><EditableText isEditing={isEditorMode} value={content.contact.phone} onSave={(val) => updateField('contact', 'phone', val)} /></a>
-               <a href={whatsappUrl} target="_blank" className="hover:text-white uppercase">Professional Inquiry</a>
+               <button onClick={() => handleDirectWhatsApp()} className="hover:text-white uppercase text-left">Professional Inquiry</button>
              </div>
              <div className="flex flex-col gap-3 max-w-xs">
                <span className="text-gold">Address</span>
@@ -580,7 +491,6 @@ const App: React.FC = () => {
           </div>
         </div>
       </footer>
-
       <style>{`
         @keyframes slowZoom { from { transform: scale(1); } to { transform: scale(1.1); } }
       `}</style>
