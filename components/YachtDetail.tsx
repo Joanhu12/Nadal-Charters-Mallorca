@@ -150,10 +150,8 @@ export const YachtDetail: React.FC<YachtDetailProps> = ({ yacht, onBack, onBook 
           </div>
         </header>
 
-        {/* Dynamic Responsive Image Grid - Seeing multiple images on phone like screenshot */}
+        {/* Dynamic Responsive Image Grid */}
         <div className="grid grid-cols-1 md:grid-cols-4 md:gap-2 px-0 md:px-12 mb-12">
-          
-          {/* Main Large Frame (Full Width Mobile, 3/4 Width Desktop) */}
           <div 
             className="md:col-span-3 aspect-[4/3] md:aspect-auto md:h-[700px] overflow-hidden relative group cursor-zoom-in"
             onClick={() => setLightboxIndex(0)}
@@ -163,16 +161,13 @@ export const YachtDetail: React.FC<YachtDetailProps> = ({ yacht, onBack, onBook 
               alt={`${yacht.title} main`} 
               className="w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-105"
             />
-            {/* Visual enhancement on mobile for image count */}
             <div className="md:hidden absolute bottom-6 right-6 bg-black/70 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 flex items-center gap-2 z-10">
                <Grid size={12} className="text-gold" />
                <span className="text-[9px] tracking-[0.1em] font-bold text-white/90">1 / {totalCount}</span>
             </div>
           </div>
 
-          {/* Desktop & Mobile Responsive Column (Visible on Mobile too to match "Seeing all images" request) */}
           <div className="grid grid-cols-2 md:grid-cols-1 md:grid-rows-3 gap-1 md:gap-2 mt-1 md:mt-0">
-            {/* We show the next 2 images on mobile in a grid, or 3 on desktop */}
             {images.slice(1, 4).map((img, idx) => (
               <div 
                 key={idx} 
@@ -185,7 +180,6 @@ export const YachtDetail: React.FC<YachtDetailProps> = ({ yacht, onBack, onBook 
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 />
                 
-                {/* "All Photos" overlay on the last visible grid item */}
                 {((idx === 1 && totalCount > 3) || (idx === 2 && totalCount > 4)) && (
                   <div className="absolute inset-0 bg-black/60 flex items-center justify-center group-hover:bg-black/40 transition-all">
                     <div className="flex flex-col items-center gap-2">
@@ -201,7 +195,6 @@ export const YachtDetail: React.FC<YachtDetailProps> = ({ yacht, onBack, onBook 
           </div>
         </div>
 
-        {/* Separation Marker */}
         <div className="flex items-center justify-center py-12 px-6">
             <span className="text-[7.5px] md:text-[9px] tracking-[0.6em] md:tracking-[0.8em] uppercase text-white/20 font-bold text-center">
               Elegance on water since 1984
@@ -214,18 +207,10 @@ export const YachtDetail: React.FC<YachtDetailProps> = ({ yacht, onBack, onBook 
         <div className="grid lg:grid-cols-12 gap-16 lg:gap-24">
           
           {/* Information Column */}
-          <div className="lg:col-span-8 space-y-20 md:space-y-32">
+          <div className="lg:col-span-8 space-y-20">
             
-            {/* Detailed Narrative */}
-            <div className="max-w-3xl">
-              <span className="text-gold text-[8px] tracking-[0.6em] uppercase font-bold block mb-10">THE EXPERIENCE</span>
-              <p className="font-serif text-2xl md:text-3xl italic font-light leading-[1.7] text-white/80">
-                {yacht.fullDescription}
-              </p>
-            </div>
-
-            {/* Vessel Specifications */}
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-y-16 gap-x-12 py-20 border-y border-white/10">
+            {/* Vessel Specifications (Characteristics) - Now at the Top of this section */}
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-y-16 gap-x-12 pb-20 border-b border-white/10">
               {[
                 { label: 'Length Overall', value: yacht.length, icon: Maximize2 },
                 { label: 'Guest Capacity', value: `${guests} Guests`, icon: Users },
@@ -245,7 +230,7 @@ export const YachtDetail: React.FC<YachtDetailProps> = ({ yacht, onBack, onBook 
             </div>
 
             {/* Technical & Amenities Grid */}
-            <div className="grid md:grid-cols-2 gap-20">
+            <div className="grid md:grid-cols-2 gap-20 py-10 border-b border-white/10">
                <div className="space-y-12">
                   <h3 className="text-[9px] tracking-[0.5em] uppercase text-gold font-bold">Naval Architecture</h3>
                   <div className="space-y-0.5">
@@ -269,6 +254,14 @@ export const YachtDetail: React.FC<YachtDetailProps> = ({ yacht, onBack, onBook 
                     ))}
                   </div>
                </div>
+            </div>
+
+            {/* The Experience Narrative - Repositioned to the End and Made Smaller */}
+            <div className="max-w-xl py-10">
+              <span className="text-gold text-[7px] tracking-[0.5em] uppercase font-bold block mb-6">THE EXPERIENCE</span>
+              <p className="font-serif text-base md:text-lg italic font-light leading-relaxed text-white/60">
+                {yacht.fullDescription}
+              </p>
             </div>
           </div>
 
