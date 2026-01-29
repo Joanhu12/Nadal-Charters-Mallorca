@@ -1,27 +1,29 @@
+
 import React, { useState, useEffect, useRef } from 'react';
-import { Settings, Check, Image as ImageIcon, X, RotateCcw, Upload, Instagram, Quote, ChevronRight, ChevronLeft, MapPin, Anchor } from 'lucide-react';
+import { 
+  X, 
+  MapPin, 
+  Anchor, 
+  RotateCcw, 
+  Check, 
+  Settings, 
+  Image as ImageIcon, 
+  Upload, 
+  Quote, 
+  ChevronLeft, 
+  ChevronRight, 
+  Instagram,
+  Music as TiktokIcon 
+} from 'lucide-react';
 import { AppContent } from './types';
 import { INITIAL_CONTENT } from './constants';
 import { Navbar } from './components/Navbar';
 import { EditableText } from './components/EditableText';
 
-const TiktokIcon = ({ size = 20, className = "" }) => (
-  <svg 
-    width={size} 
-    height={size} 
-    viewBox="0 0 24 24" 
-    fill="none" 
-    stroke="currentColor" 
-    strokeWidth="2" 
-    strokeLinecap="round" 
-    strokeLinejoin="round" 
-    className={className}
-  >
-    <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
-  </svg>
-);
-
-interface PendingImageUpdate {
+/* 
+ * Fixed broken interface definition and mangled import statement 
+ */
+export interface PendingImageUpdate {
   section: keyof AppContent;
   field: string;
   index?: number;
@@ -29,9 +31,9 @@ interface PendingImageUpdate {
 }
 
 const App: React.FC = () => {
-  // Using v9 to ensure the specific image updates are forced onto the client immediately
+  // Bumping version to v31 to force content refresh with the new fleet specifications
   const [content, setContent] = useState<AppContent>(() => {
-    const saved = localStorage.getItem('nadal_content_v9');
+    const saved = localStorage.getItem('nadal_content_v31');
     if (saved) {
       try {
         return JSON.parse(saved);
@@ -56,7 +58,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     try {
-      localStorage.setItem('nadal_content_v9', JSON.stringify(content));
+      localStorage.setItem('nadal_content_v31', JSON.stringify(content));
     } catch (e) {
       console.warn("Storage limit reached. Changes will be kept in session.");
     }
@@ -172,7 +174,7 @@ const App: React.FC = () => {
   const resetToDefaults = () => {
     if (confirm("Reset visuals and text to original defaults?")) {
       setContent(INITIAL_CONTENT);
-      localStorage.removeItem('nadal_content_v9');
+      localStorage.removeItem('nadal_content_v31');
       setIsEditorMode(false);
     }
   };

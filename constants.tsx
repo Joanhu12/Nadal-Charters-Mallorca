@@ -2,17 +2,17 @@ import { AppContent } from './types';
 
 export const INITIAL_CONTENT: AppContent = {
   hero: {
-    title: "The Mediterranean, Defined.",
-    subtitle: "Exclusive yacht charters across the Balearic Isles. Elegance, curated for the horizon.",
+    title: "Balearic Yacht Charters",
+    subtitle: "Exclusive yacht charters across the Balearic Islands. Elegance, curated for the horizon.",
     ctaPrimary: "Reserve Your Voyage",
     ctaSecondary: "The Fleet",
-    bgImage: "https://images.unsplash.com/photo-1540946485063-a40da27545f8?auto=format&fit=crop&q=80&w=2000"
+    bgImage: "https://images.unsplash.com/photo-1747080763845-5aa9e20d38be?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDMyfHx8ZW58MHx8fHx8"
   },
   about: {
     heading: "Elegance on Water",
     subheading: "NADAL CHARTERS",
     text: "We provide the vessel. The Mediterranean provides the rest. Experience the islands through a lens of absolute privacy and effortless luxury.",
-    image: "https://images.unsplash.com/photo-1562285060-2217814da611?auto=format&fit=crop&q=80&w=1200"
+    image: "https://images.pexels.com/photos/18649940/pexels-photo-18649940.jpeg?auto=compress&cs=tinysrgb&w=1200"
   },
   fleet: {
     heading: "The Charter Collection",
@@ -20,65 +20,65 @@ export const INITIAL_CONTENT: AppContent = {
       {
         id: "1",
         title: "Iberia 92",
-        subtitle: "Classic Mahogany",
-        image: "https://images.unsplash.com/photo-1567891240304-ac946a4d358f?auto=format&fit=crop&q=80&w=800",
-        price: "€12,500 / Day",
-        details: "4 Cabins · Crewed"
+        subtitle: "Superyacht Majesty",
+        image: "https://images.unsplash.com/photo-1559385301-0187cb6eff46?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8eWFjaHR8ZW58MHwxfDB8fHww",
+        price: "€62,500 / Day",
+        details: "8 Cabins · Crewed"
       },
       {
         id: "2",
         title: "The Solstice",
         subtitle: "Modern Minimalist",
-        image: "https://images.unsplash.com/photo-1621275471769-e6aa344546d5?auto=format&fit=crop&q=80&w=800",
-        price: "€18,000 / Day",
-        details: "5 Cabins · Wellness"
+        image: "https://images.unsplash.com/photo-1730544218748-74f28a89215b?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mjd8fGx1eHVyeSUyMHlhY2h0c3xlbnwwfDF8MHx8fDA%3D",
+        price: "€4,100 / Day",
+        details: "2 Cabins · Wellness"
       },
       {
         id: "3",
-        title: "Heritage 70",
-        subtitle: "Vintage Lines",
-        image: "https://images.unsplash.com/photo-1569263979104-865ab7cd8d13?auto=format&fit=crop&q=80&w=800",
-        price: "€9,200 / Day",
-        details: "3 Cabins · Classic"
+        title: "My Lady",
+        subtitle: "Sailing Icon",
+        image: "https://images.unsplash.com/photo-1692775562810-f5f6445920d1?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTAzfHxsdXh1cnklMjB5YWNodHN8ZW58MHwxfDB8fHww",
+        price: "€7,500 / Day",
+        details: "3 Cabins · Sailing"
       },
       {
         id: "4",
-        title: "Azure 60",
-        subtitle: "Luxury Catamaran",
-        image: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=800",
-        price: "€11,200 / Day",
-        details: "4 Cabins · Stability"
+        title: "Azure",
+        subtitle: "Quiet Luxury",
+        image: "https://images.unsplash.com/photo-1604671801989-586dde3c1574?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTE1fHx5YWNodHxlbnwwfDF8MHx8fDA%3D",
+        price: "€6,000 / Day",
+        details: "3 Cabins · Stability"
       },
       {
         id: "5",
         title: "Zephyr 85",
         subtitle: "Performance Cruiser",
-        image: "https://images.unsplash.com/photo-1517315003714-a071486bd9ea?auto=format&fit=crop&q=80&w=800",
-        price: "€15,500 / Day",
-        details: "4 Cabins · Speed"
+        image: "https://images.unsplash.com/photo-1662641723310-d3ec5b838295?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTA0fHx5YWNodHxlbnwwfDF8MHx8fDA%3D",
+        price: "€7,500 / Day",
+        details: "2 Cabins · Speed"
       },
       {
         id: "6",
         title: "Meridian",
-        subtitle: "Superyacht Luxe",
-        image: "https://images.unsplash.com/photo-1559136555-9303baea8ebd?auto=format&fit=crop&q=80&w=800",
-        price: "€38,000 / Day",
-        details: "6 Cabins · Jacuzzi"
+        subtitle: "Pure Serenity",
+        image: "https://images.unsplash.com/photo-1698740988027-33e50fa9d723?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTN8fHNwYW5pc2glMjB5YWNodHxlbnwwfDF8MHx8fDA%3D",
+        price: "€3,800 / Day",
+        details: "2 Cabins · Comfort"
       }
     ]
   },
   destinations: {
     heading: "Hidden Harbors",
     items: [
-      { id: "d1", name: "Deià", image: "https://images.unsplash.com/photo-1516483642773-2f66be7ed114?auto=format&fit=crop&q=80&w=600" },
-      { id: "d2", name: "Cabrera", image: "https://images.unsplash.com/photo-1534008757030-27299c4371b6?auto=format&fit=crop&q=80&w=600" },
-      { id: "d3", name: "Tramuntana", image: "https://images.unsplash.com/photo-1515238152791-8216bfdf89a7?auto=format&fit=crop&q=80&w=600" }
+      { id: "d1", name: "Deià", image: "https://abcmallorcastorage.blob.core.windows.net/images/2018/01/cala-deia-img01.jpg" },
+      { id: "d2", name: "Cabrera", image: "https://st3.idealista.com/news/archivos/styles/amp_1200x675_16_9/public/2025-05/images/coast-3949782_1280.jpg?VersionId=EK1PefQKW4yXkTj6AM4K15Tz4cgIOawe&itok=8mg4cv-q" },
+      { id: "d3", name: "Tramuntana", image: "https://images.unsplash.com/photo-1734639403228-476663647bcf?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OXx8Y2FsYSUyMG1hbGxvcmNhfGVufDB8MXwwfHx8MA%3D%3D" }
     ]
   },
   concierge: {
     heading: "Effortless Service",
     text: "From private chefs to secluded island transfers. Your only requirement is to enjoy the view.",
-    image: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&q=80&w=1200"
+    image: "https://hillrobinson.com/wp-content/uploads/2024/02/Yacht-Crew-Services_resize.jpg"
   },
   testimonials: {
     items: [
@@ -93,7 +93,7 @@ export const INITIAL_CONTENT: AppContent = {
         id: "t2",
         quote: "Absolute privacy and impeccable service. We spent three days in hidden coves that felt like another world.",
         author: "Elena Sorokin",
-        authorImage: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=300",
+        authorImage: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&get=80&w=300",
         context: "July 2024 · Cabrera"
       },
       {
