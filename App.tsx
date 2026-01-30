@@ -340,13 +340,16 @@ const App: React.FC = () => {
                     <h3 className="font-serif text-3xl italic mb-1 tracking-tight">
                       <EditableText isEditing={isEditorMode} value={item.title} onSave={(val) => updateListItem('fleet', idx, 'title', val)} />
                     </h3>
-                    <div className="flex justify-between items-center w-full">
+                    <div className="flex justify-between items-end w-full">
                        <span className="text-[9px] tracking-[0.4em] uppercase text-white/50 font-bold">
                          <EditableText isEditing={isEditorMode} value={item.subtitle} onSave={(val) => updateListItem('fleet', idx, 'subtitle', val)} />
                        </span>
-                       <span className="text-gold font-serif italic text-lg">
-                         <EditableText isEditing={isEditorMode} value={item.price.split(' ')[0]} onSave={(val) => updateListItem('fleet', idx, 'price', val)} />
-                       </span>
+                       <div className="flex flex-col items-end">
+                         <span className="text-[8px] tracking-widest uppercase text-gold/40 font-bold mb-0.5">From</span>
+                         <span className="text-gold font-serif italic text-lg leading-none">
+                           <EditableText isEditing={isEditorMode} value={item.price.split(' ')[0]} onSave={(val) => updateListItem('fleet', idx, 'price', val)} />
+                         </span>
+                       </div>
                     </div>
                   </div>
 

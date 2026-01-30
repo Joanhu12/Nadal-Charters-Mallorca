@@ -48,9 +48,39 @@ export const YachtDetail: React.FC<YachtDetailProps> = ({ yacht, onBack, onBook 
     setScrollIndex(index);
   };
 
-  // Helper for stats
-  const guests = yacht.details.match(/(\d+)/)?.[0] || '12';
-  const cabins = yacht.details.toLowerCase().includes('cabin') ? yacht.details.match(/(\d+)/)?.[0] : '4';
+  // Improved context-aware helper for stats
+  const getStats = () => {
+    const detailString = yacht.details || "";
+    const parts = detailString.split('·').map(p => p.trim());
+    
+    let guests = '12';
+    let cabins = '4';
+
+    // 1. Try finding explicitly named parts
+    parts.forEach(p => {
+      const lower = p.toLowerCase();
+      const numMatch = p.match(/\d+/);
+      if (numMatch) {
+        if (lower.includes('guest')) {
+          guests = numMatch[0];
+        } else if (lower.includes('cabin')) {
+          cabins = numMatch[0];
+        }
+      }
+    });
+
+    // 2. Fallback to specs if details extraction didn't find specific labels
+    if (yacht.specs) {
+      const capSpec = yacht.specs.find(s => s.label.toLowerCase().includes('capacity'));
+      const cabSpec = yacht.specs.find(s => s.label.toLowerCase().includes('cabin'));
+      if (capSpec) guests = capSpec.value.match(/\d+/)?.[0] || guests;
+      if (cabSpec) cabins = cabSpec.value.match(/\d+/)?.[0] || cabins;
+    }
+
+    return { guests, cabins };
+  };
+
+  const { guests, cabins } = getStats();
 
   return (
     <div className="bg-[#080C10] min-h-screen text-[#FDFCF0] selection:bg-gold selection:text-black relative">
@@ -282,9 +312,12 @@ export const YachtDetail: React.FC<YachtDetailProps> = ({ yacht, onBack, onBook 
                <div className="bg-[#0D1217] border border-white/10 p-10 md:p-14 shadow-3xl">
                   <div className="mb-12">
                     <span className="text-[8px] tracking-[0.4em] uppercase text-white/40 block mb-4 font-bold">Charter Investment</span>
-                    <div className="flex items-baseline gap-3">
-                       <span className="text-5xl md:text-6xl font-serif text-gold italic leading-none">{yacht.price.split(' ')[0]}</span>
-                       <span className="text-[9px] tracking-[0.3em] uppercase text-white/40 font-bold">{yacht.price.split(' ').slice(1).join(' ')}</span>
+                    <div className="flex flex-col mb-4">
+                       <span className="text-[9px] tracking-[0.5em] uppercase text-gold/60 font-black mb-1">From</span>
+                       <div className="flex items-baseline gap-3">
+                          <span className="text-5xl md:text-6xl font-serif text-gold italic leading-none">{yacht.price.split(' ')[0]}</span>
+                          <span className="text-[9px] tracking-[0.3em] uppercase text-white/40 font-bold">{yacht.price.split(' ').slice(1).join(' ')}</span>
+                       </div>
                     </div>
                   </div>
 
