@@ -69,10 +69,4 @@ export interface AppContent {
   };
 }
 
-export interface MultiLangContent {
-  en: AppContent;
-  es: AppContent;
-}
-
 export type ContentKey = keyof AppContent;
-export type Language = 'en' | 'es';

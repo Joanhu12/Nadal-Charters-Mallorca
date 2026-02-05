@@ -11,9 +11,10 @@ import {
   ChevronLeft, 
   ChevronRight, 
   Instagram,
-  Music as TiktokIcon 
+  Music as TiktokIcon,
+  MapPin
 } from 'lucide-react';
-import { MultiLangContent, CharterItem, Language, AppContent } from './types';
+import { CharterItem, AppContent } from './types';
 import { INITIAL_CONTENT } from './constants';
 import { Navbar } from './components/Navbar';
 import { EditableText } from './components/EditableText';
@@ -27,12 +28,8 @@ export interface PendingImageUpdate {
 }
 
 const App: React.FC = () => {
-  const [lang, setLang] = useState<Language>(() => {
-    return (localStorage.getItem('nadal_lang') as Language) || 'en';
-  });
-
-  const [translations, setTranslations] = useState<MultiLangContent>(() => {
-    const saved = localStorage.getItem('nadal_content_v71');
+  const [content, setContent] = useState<AppContent>(() => {
+    const saved = localStorage.getItem('nadal_content_v72');
     if (saved) {
       try {
         return JSON.parse(saved);
@@ -43,8 +40,7 @@ const App: React.FC = () => {
     return INITIAL_CONTENT;
   });
   
-  const content = translations[lang];
-
+  const [activeLocation, setActiveLocation] = useState<string>('Mallorca');
   const [isEditorMode, setIsEditorMode] = useState(false);
   const [pendingImage, setPendingImage] = useState<PendingImageUpdate | null>(null);
   const [tempUrl, setTempUrl] = useState("");
@@ -55,17 +51,18 @@ const App: React.FC = () => {
   
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    localStorage.setItem('nadal_lang', lang);
-  }, [lang]);
+  const filteredFleet = content.fleet.items.filter(item => {
+    if (activeLocation === 'Mallorca') return item.location?.includes('Mallorca');
+    return item.location?.includes('Ibiza');
+  });
 
   useEffect(() => {
     try {
-      localStorage.setItem('nadal_content_v71', JSON.stringify(translations));
+      localStorage.setItem('nadal_content_v72', JSON.stringify(content));
     } catch (e) {
       console.warn("Storage limit reached.");
     }
-  }, [translations]);
+  }, [content]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -93,30 +90,24 @@ const App: React.FC = () => {
   };
 
   const updateField = (section: keyof AppContent, field: string, value: string) => {
-    setTranslations(prev => ({
+    setContent(prev => ({
       ...prev,
-      [lang]: {
-        ...prev[lang],
-        [section]: {
-          ...(prev[lang][section] as any),
-          [field]: value
-        }
+      [section]: {
+        ...(prev[section] as any),
+        [field]: value
       }
     }));
   };
 
   const updateListItem = (section: keyof AppContent, index: number, field: string, value: string, listField: string = 'items') => {
-    setTranslations(prev => {
-      const list = [...(prev[lang][section] as any)[listField]];
+    setContent(prev => {
+      const list = [...(prev[section] as any)[listField]];
       list[index] = { ...list[index], [field]: value };
       return {
         ...prev,
-        [lang]: {
-          ...prev[lang],
-          [section]: {
-            ...(prev[lang][section] as any),
-            [listField]: list
-          }
+        [section]: {
+          ...(prev[section] as any),
+          [listField]: list
         }
       };
     });
@@ -182,8 +173,8 @@ const App: React.FC = () => {
 
   const resetToDefaults = () => {
     if (confirm("Reset visuals and text to original defaults?")) {
-      setTranslations(INITIAL_CONTENT);
-      localStorage.removeItem('nadal_content_v71');
+      setContent(INITIAL_CONTENT);
+      localStorage.removeItem('nadal_content_v72');
       setIsEditorMode(false);
       setSelectedYacht(null);
     }
@@ -210,9 +201,9 @@ const App: React.FC = () => {
   };
 
   const handleDirectWhatsApp = (yacht?: CharterItem) => {
-    let message = lang === 'es' ? "Hola,\n\nMe gustaría solicitar información sobre un chárter privado en Baleares." : "Hello,\n\nI would like to enquire about a private yacht charter in the Balearic Islands.";
+    let message = "Hello,\n\nI would like to enquire about a private yacht charter in the Balearic Islands.";
     if (yacht) {
-      message = lang === 'es' ? `Hola,\n\nMe interesa consultar disponibilidad para el ${yacht.title}.\n\nSaludos.` : `Hello,\n\nI am interested in checking the availability for the ${yacht.title}.\n\nKind regards.`;
+      message = `Hello,\n\nI am interested in checking the availability for the ${yacht.title}.\n\nKind regards.`;
     }
     const encodedMsg = encodeURIComponent(message);
     const whatsappLink = `https://wa.me/${content.contact.whatsapp.replace(/\s+/g, '')}?text=${encodedMsg}`;
@@ -224,7 +215,7 @@ const App: React.FC = () => {
     setSelectedYacht(item);
   };
 
-  const whatsappUrl = `https://wa.me/${content.contact.whatsapp.replace(/\s+/g, '')}?text=${encodeURIComponent(lang === 'es' ? "Hola, me gustaría información." : "Hello, I'd like info.")}`;
+  const whatsappUrl = `https://wa.me/${content.contact.whatsapp.replace(/\s+/g, '')}?text=${encodeURIComponent("Hello, I'd like info.")}`;
   const tiktokUrl = "https://www.tiktok.com/@nadalcharters";
 
   if (selectedYacht) {
@@ -239,7 +230,7 @@ const App: React.FC = () => {
 
   return (
     <div className="relative overflow-x-hidden min-h-screen bg-[#080C10] text-[#FDFCF0]">
-      <Navbar currentLang={lang} onLanguageChange={setLang} />
+      <Navbar />
 
       <button id="global-book-trigger" className="hidden" onClick={() => handleDirectWhatsApp()} />
 
@@ -326,7 +317,7 @@ const App: React.FC = () => {
               onClick={() => handleDirectWhatsApp()}
               className="inline-block border border-[#C5A27D] py-4 px-10 text-[9px] tracking-[0.4em] uppercase font-bold text-[#C5A27D] hover:bg-[#C5A27D] hover:text-[#080C10] transition-all duration-500"
             >
-              {lang === 'es' ? 'Hable con un experto' : 'Talk to an expert'}
+              Talk to an expert
             </button>
           </div>
           <div className="relative group overflow-hidden border border-white/5">
@@ -338,11 +329,28 @@ const App: React.FC = () => {
 
       <section id="fleet" className="py-32 px-6 bg-[#080C10] border-t border-white/5 scroll-mt-24">
         <div className="max-w-7xl mx-auto">
-          <h2 className="font-serif text-4xl md:text-7xl mb-24 italic font-light text-center">
+          <h2 className="font-serif text-4xl md:text-7xl mb-16 italic font-light text-center">
             <EditableText isEditing={isEditorMode} value={content.fleet.heading} onSave={(val) => updateField('fleet', 'heading', val)} />
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {content.fleet.items.map((item, idx) => (
+          
+          {/* Location Filter Tabs */}
+          <div className="flex justify-center items-center gap-12 mb-20 border-b border-white/10 max-w-2xl mx-auto pb-4">
+             {['Mallorca', 'Ibiza & Formentera'].map((loc) => (
+               <button 
+                 key={loc}
+                 onClick={() => setActiveLocation(loc)}
+                 className={`text-[9px] md:text-[11px] tracking-[0.4em] uppercase font-black transition-all duration-500 relative pb-4 ${activeLocation === loc ? 'text-gold' : 'text-white/20 hover:text-white/60'}`}
+               >
+                 {loc}
+                 {activeLocation === loc && (
+                   <span className="absolute bottom-0 left-0 w-full h-px bg-gold animate-in fade-in slide-in-from-left-4 duration-500" />
+                 )}
+               </button>
+             ))}
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 transition-all duration-700 animate-in fade-in zoom-in-95">
+            {filteredFleet.map((item, idx) => (
               <div key={item.id} className="group flex flex-col">
                 <div 
                   className={`relative overflow-hidden aspect-square mb-6 border border-white/5 bg-black ${!isEditorMode ? 'cursor-pointer' : ''}`}
@@ -351,6 +359,11 @@ const App: React.FC = () => {
                   <ImageFallback src={item.image} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
                   <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition-all duration-500" />
                   
+                  <div className="absolute top-6 left-6 flex items-center gap-2 bg-black/60 backdrop-blur-md px-3 py-1.5 border border-white/5">
+                     <MapPin size={10} className="text-gold" />
+                     <span className="text-[7px] tracking-widest uppercase text-white/80 font-bold">{item.location}</span>
+                  </div>
+
                   <div className="absolute inset-0 flex flex-col justify-end p-8 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90 group-hover:opacity-100 transition-opacity">
                     <h3 className="font-serif text-3xl italic mb-1 tracking-tight">
                       <EditableText isEditing={isEditorMode} value={item.title} onSave={(val) => updateListItem('fleet', idx, 'title', val)} />
@@ -360,7 +373,7 @@ const App: React.FC = () => {
                          <EditableText isEditing={isEditorMode} value={item.subtitle} onSave={(val) => updateListItem('fleet', idx, 'subtitle', val)} />
                        </span>
                        <div className="flex flex-col items-end">
-                         <span className="text-[8px] tracking-widest uppercase text-gold/40 font-bold mb-0.5">{lang === 'es' ? 'Desde' : 'From'}</span>
+                         <span className="text-[8px] tracking-widest uppercase text-gold/40 font-bold mb-0.5">From</span>
                          <span className="text-gold font-serif italic text-lg leading-none">
                            <EditableText isEditing={isEditorMode} value={item.price.split(' ')[0]} onSave={(val) => updateListItem('fleet', idx, 'price', val)} />
                          </span>
@@ -410,7 +423,7 @@ const App: React.FC = () => {
           <ImageFallback src={content.concierge.image} className="w-full h-full object-cover grayscale" />
         </div>
         <div className="max-w-4xl mx-auto relative z-10 text-center">
-          <span className="text-[10px] tracking-[0.5em] uppercase text-gold block mb-6">{lang === 'es' ? 'Nivel Conserjería' : 'Concierge Level'}</span>
+          <span className="text-[10px] tracking-[0.5em] uppercase text-gold block mb-6">Concierge Level</span>
           <h2 className="font-serif text-5xl md:text-7xl mb-12 italic font-light">
             <EditableText isEditing={isEditorMode} value={content.concierge.heading} onSave={(val) => updateField('concierge', 'heading', val)} />
           </h2>
@@ -418,7 +431,7 @@ const App: React.FC = () => {
             <EditableText isEditing={isEditorMode} value={content.concierge.text} onSave={(val) => updateField('concierge', 'text', val)} />
           </p>
           <button onClick={() => handleDirectWhatsApp()} className="border border-[#C5A27D] py-5 px-14 text-[10px] tracking-[0.4em] uppercase font-bold text-[#C5A27D] hover:bg-[#C5A27D] hover:text-[#080C10] transition-all duration-500">
-            {lang === 'es' ? 'Solicitar Servicio' : 'Request Service'}
+            Request Service
           </button>
           {isEditorMode && <button onClick={() => openImageEditor('concierge', 'image', content.concierge.image)} className="absolute -bottom-12 right-0 bg-black/60 p-3 text-[9px] uppercase tracking-[0.3em] text-white border border-white/10">Frame Asset</button>}
         </div>
@@ -478,7 +491,7 @@ const App: React.FC = () => {
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-12">
           <div>
             <a href="#hero" onClick={(e) => scrollToSection(null, 'hero')} className="font-serif text-3xl tracking-[0.5em] uppercase text-[#FDFCF0] font-light mb-4 block">NADAL</a>
-            <p className="text-[9px] tracking-[0.2em] text-[#FDFCF0]/30 uppercase mb-8">{lang === 'es' ? 'Alquiler de Yates en Baleares · Est. 1984' : 'Balearic Yacht Charters · Est. 1984'}</p>
+            <p className="text-[9px] tracking-[0.2em] text-[#FDFCF0]/30 uppercase mb-8">Balearic Yacht Charters · Est. 1984</p>
             <div className="flex gap-6 items-center">
               <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-gold hover:text-white transition-all"><Instagram size={20} /></a>
               <a href={tiktokUrl} target="_blank" rel="noopener noreferrer" className="text-gold hover:text-white transition-all"><TiktokIcon size={20} /></a>
@@ -486,12 +499,12 @@ const App: React.FC = () => {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 text-[9px] tracking-[0.3em] uppercase text-[#FDFCF0]/40 font-medium">
              <div className="flex flex-col gap-3">
-               <span className="text-gold">{lang === 'es' ? 'Consultas' : 'Inquiries'}</span>
+               <span className="text-gold">Inquiries</span>
                <a href={`tel:${content.contact.phone}`} className="hover:text-white"><EditableText isEditing={isEditorMode} value={content.contact.phone} onSave={(val) => updateField('contact', 'phone', val)} /></a>
-               <button onClick={() => handleDirectWhatsApp()} className="hover:text-white uppercase text-left">{lang === 'es' ? 'Consulta Profesional' : 'Professional Inquiry'}</button>
+               <button onClick={() => handleDirectWhatsApp()} className="hover:text-white uppercase text-left">Professional Inquiry</button>
              </div>
              <div className="flex flex-col gap-3 max-w-xs">
-               <span className="text-gold">{lang === 'es' ? 'Dirección' : 'Address'}</span>
+               <span className="text-gold">Address</span>
                <div className="leading-loose italic opacity-80"><EditableText isEditing={isEditorMode} value={content.contact.address} onSave={(val) => updateField('contact', 'address', val)} /></div>
              </div>
           </div>

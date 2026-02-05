@@ -1,32 +1,16 @@
 
 import React, { useState } from 'react';
 import { Menu, X } from 'lucide-react';
-import { Language } from '../types';
 
-interface NavbarProps {
-  currentLang: Language;
-  onLanguageChange: (lang: Language) => void;
-}
-
-export const Navbar: React.FC<NavbarProps> = ({ currentLang, onLanguageChange }) => {
+export const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const translations = {
-    en: [
-      { name: 'Fleet', href: '#fleet' },
-      { name: 'Harbors', href: '#destinations' },
-      { name: 'Concierge', href: '#concierge' },
-      { name: 'Contact', href: '#contact' },
-    ],
-    es: [
-      { name: 'Flota', href: '#fleet' },
-      { name: 'Puertos', href: '#destinations' },
-      { name: 'Conserjería', href: '#concierge' },
-      { name: 'Contacto', href: '#contact' },
-    ]
-  };
-
-  const navLinks = translations[currentLang];
+  const navLinks = [
+    { name: 'Fleet', href: '#fleet' },
+    { name: 'Harbors', href: '#destinations' },
+    { name: 'Concierge', href: '#concierge' },
+    { name: 'Contact', href: '#contact' },
+  ];
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
@@ -78,24 +62,6 @@ export const Navbar: React.FC<NavbarProps> = ({ currentLang, onLanguageChange })
           ))}
         </div>
 
-        {/* Language Switcher */}
-        <div className="flex items-center gap-3 ml-4 border-l border-white/10 pl-10">
-          <button 
-            onClick={() => onLanguageChange('en')}
-            className={`w-5 h-5 rounded-full overflow-hidden transition-all duration-300 border-2 ${currentLang === 'en' ? 'border-[#C5A27D] scale-110 opacity-100' : 'border-transparent opacity-40 hover:opacity-100'}`}
-            title="English"
-          >
-            <img src="https://flagcdn.com/w40/gb.png" className="w-full h-full object-cover" alt="UK" />
-          </button>
-          <button 
-            onClick={() => onLanguageChange('es')}
-            className={`w-5 h-5 rounded-full overflow-hidden transition-all duration-300 border-2 ${currentLang === 'es' ? 'border-[#C5A27D] scale-110 opacity-100' : 'border-transparent opacity-40 hover:opacity-100'}`}
-            title="Español"
-          >
-            <img src="https://flagcdn.com/w40/es.png" className="w-full h-full object-cover" alt="Spain" />
-          </button>
-        </div>
-
         <button 
           onClick={() => {
             const btn = document.getElementById('global-book-trigger');
@@ -103,19 +69,11 @@ export const Navbar: React.FC<NavbarProps> = ({ currentLang, onLanguageChange })
           }}
           className="ml-4 border border-[#C5A27D]/30 px-6 py-2.5 text-[9px] tracking-[0.4em] uppercase font-bold text-[#C5A27D] hover:bg-[#C5A27D] hover:text-[#080C10] transition-all duration-500"
         >
-          {currentLang === 'es' ? 'Reservar' : 'Book'}
+          Book
         </button>
       </div>
 
-      <div className="flex md:hidden items-center gap-4">
-        <div className="flex items-center gap-2">
-           <button onClick={() => onLanguageChange('en')} className={`w-6 h-6 rounded-full overflow-hidden border ${currentLang === 'en' ? 'border-gold' : 'border-transparent opacity-50'}`}>
-             <img src="https://flagcdn.com/w40/gb.png" className="w-full h-full object-cover" alt="UK" />
-           </button>
-           <button onClick={() => onLanguageChange('es')} className={`w-6 h-6 rounded-full overflow-hidden border ${currentLang === 'es' ? 'border-gold' : 'border-transparent opacity-50'}`}>
-             <img src="https://flagcdn.com/w40/es.png" className="w-full h-full object-cover" alt="Spain" />
-           </button>
-        </div>
+      <div className="flex md:hidden items-center">
         <button className="text-[#C5A27D] p-2" onClick={() => setIsOpen(!isOpen)} aria-label="Toggle Menu">
           {isOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
@@ -145,7 +103,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentLang, onLanguageChange })
           }}
           className="mt-4 border border-[#C5A27D] px-10 py-4 text-[10px] tracking-[0.4em] uppercase font-bold text-[#C5A27D]"
         >
-          {currentLang === 'es' ? 'Reservar Ahora' : 'Book Now'}
+          Book Now
         </button>
       </div>
     </nav>
