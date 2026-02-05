@@ -1,15 +1,32 @@
+
 import React, { useState } from 'react';
 import { Menu, X } from 'lucide-react';
+import { Language } from '../types';
 
-export const Navbar: React.FC = () => {
+interface NavbarProps {
+  currentLang: Language;
+  onLanguageChange: (lang: Language) => void;
+}
+
+export const Navbar: React.FC<NavbarProps> = ({ currentLang, onLanguageChange }) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const navLinks = [
-    { name: 'Fleet', href: '#fleet' },
-    { name: 'Harbors', href: '#destinations' },
-    { name: 'Concierge', href: '#concierge' },
-    { name: 'Contact', href: '#contact' },
-  ];
+  const translations = {
+    en: [
+      { name: 'Fleet', href: '#fleet' },
+      { name: 'Harbors', href: '#destinations' },
+      { name: 'Concierge', href: '#concierge' },
+      { name: 'Contact', href: '#contact' },
+    ],
+    es: [
+      { name: 'Flota', href: '#fleet' },
+      { name: 'Puertos', href: '#destinations' },
+      { name: 'Conserjería', href: '#concierge' },
+      { name: 'Contacto', href: '#contact' },
+    ]
+  };
+
+  const navLinks = translations[currentLang];
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
@@ -36,7 +53,7 @@ export const Navbar: React.FC = () => {
 
   return (
     <nav className="fixed top-0 left-0 w-full z-[90] px-6 md:px-12 py-6 md:py-8 flex justify-between items-center bg-gradient-to-b from-[#080C10]/95 via-[#080C10]/70 to-transparent backdrop-blur-[4px]">
-      <div className="flex items-center">
+      <div className="flex items-center gap-8">
         <a 
           href="#hero" 
           onClick={(e) => handleNavClick(e, '#hero')}
@@ -60,6 +77,25 @@ export const Navbar: React.FC = () => {
             </a>
           ))}
         </div>
+
+        {/* Language Switcher */}
+        <div className="flex items-center gap-3 ml-4 border-l border-white/10 pl-10">
+          <button 
+            onClick={() => onLanguageChange('en')}
+            className={`w-5 h-5 rounded-full overflow-hidden transition-all duration-300 border-2 ${currentLang === 'en' ? 'border-[#C5A27D] scale-110 opacity-100' : 'border-transparent opacity-40 hover:opacity-100'}`}
+            title="English"
+          >
+            <img src="https://flagcdn.com/w40/gb.png" className="w-full h-full object-cover" alt="UK" />
+          </button>
+          <button 
+            onClick={() => onLanguageChange('es')}
+            className={`w-5 h-5 rounded-full overflow-hidden transition-all duration-300 border-2 ${currentLang === 'es' ? 'border-[#C5A27D] scale-110 opacity-100' : 'border-transparent opacity-40 hover:opacity-100'}`}
+            title="Español"
+          >
+            <img src="https://flagcdn.com/w40/es.png" className="w-full h-full object-cover" alt="Spain" />
+          </button>
+        </div>
+
         <button 
           onClick={() => {
             const btn = document.getElementById('global-book-trigger');
@@ -67,13 +103,23 @@ export const Navbar: React.FC = () => {
           }}
           className="ml-4 border border-[#C5A27D]/30 px-6 py-2.5 text-[9px] tracking-[0.4em] uppercase font-bold text-[#C5A27D] hover:bg-[#C5A27D] hover:text-[#080C10] transition-all duration-500"
         >
-          Book
+          {currentLang === 'es' ? 'Reservar' : 'Book'}
         </button>
       </div>
 
-      <button className="md:hidden text-[#C5A27D] p-2" onClick={() => setIsOpen(!isOpen)} aria-label="Toggle Menu">
-        {isOpen ? <X size={24} /> : <Menu size={24} />}
-      </button>
+      <div className="flex md:hidden items-center gap-4">
+        <div className="flex items-center gap-2">
+           <button onClick={() => onLanguageChange('en')} className={`w-6 h-6 rounded-full overflow-hidden border ${currentLang === 'en' ? 'border-gold' : 'border-transparent opacity-50'}`}>
+             <img src="https://flagcdn.com/w40/gb.png" className="w-full h-full object-cover" alt="UK" />
+           </button>
+           <button onClick={() => onLanguageChange('es')} className={`w-6 h-6 rounded-full overflow-hidden border ${currentLang === 'es' ? 'border-gold' : 'border-transparent opacity-50'}`}>
+             <img src="https://flagcdn.com/w40/es.png" className="w-full h-full object-cover" alt="Spain" />
+           </button>
+        </div>
+        <button className="text-[#C5A27D] p-2" onClick={() => setIsOpen(!isOpen)} aria-label="Toggle Menu">
+          {isOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+      </div>
 
       {/* Mobile Menu Overlay */}
       <div className={`fixed inset-0 bg-[#080C10] z-[100] flex flex-col items-center justify-center gap-8 transition-all duration-500 ${isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none translate-y-[-10%]'}`}>
@@ -99,7 +145,7 @@ export const Navbar: React.FC = () => {
           }}
           className="mt-4 border border-[#C5A27D] px-10 py-4 text-[10px] tracking-[0.4em] uppercase font-bold text-[#C5A27D]"
         >
-          Book Now
+          {currentLang === 'es' ? 'Reservar Ahora' : 'Book Now'}
         </button>
       </div>
     </nav>
